@@ -116,7 +116,7 @@ check_args()
 }
 
 
-format()
+format_filesystem()
 {
     # TODO: add swap 
 
@@ -140,7 +140,7 @@ format()
     return "${SUCCESS}"
 }
 
-mount()
+mount_filesystem()
 {
     #TODO: change boot device for user required
     
@@ -173,10 +173,10 @@ install()
     pacman -Syu --noconfirm
 
     gprintf "[+] Partitioning ${HD}..."
-    format
+    format_filesystem
 
     gprintf "[+] Mounting filesystem..."
-    mount
+    mount_filesystem
 
     gprintf "[+] Installing BlackArch packages..."
     install_packages

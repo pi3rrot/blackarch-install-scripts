@@ -116,6 +116,14 @@ check_args()
 }
 
 
+update_system()
+{
+    printf '[blackarch]\nserver = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
+    pacman -Syu --noconfirm
+    
+    return "${SUCCESS}"
+}
+
 format_filesystem()
 {
     # TODO: add swap 
@@ -170,8 +178,8 @@ install_grub()
 install()
 {
     gprintf "[+] Updating system..."
-    pacman -Syu --noconfirm
-
+    update_system
+    
     gprintf "[+] Partitioning ${HD}..."
     format_filesystem
 

@@ -118,7 +118,10 @@ check_args()
 
 update_system()
 {
-    printf '[blackarch]\nserver = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
+    if ! grep -q "blackarch" /etc/pacman.conf; then
+        gprintf "Adding BlackArch Official Repo"
+        printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
+    fi
     pacman -Syu --noconfirm
     
     return "${SUCCESS}"
@@ -141,8 +144,8 @@ format_filesystem()
     mkfs.ext2 -L boot /dev/sda1
     mkfs.ext4 -L root /dev/sda2
 
-    _printf "[+] Created boot partition: /dev/sda1 - ext2"
-    _printf "[+] Created root partition: /dev/sda2 - ext4"
+    gprintf "[+] Created boot partition: /dev/sda1 - ext2"
+    gprintf "[+] Created root partition: /dev/sda2 - ext4"
 
     
     return "${SUCCESS}"

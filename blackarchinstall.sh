@@ -163,9 +163,8 @@ mount_filesystem()
     #TODO: change boot device for user required
     
     mkdir "${ROOT}"
-    mkdir "${ROOT}/boot"
-    
     mount -t ext4 "/dev/${HD}2" "${ROOT}" 
+    mkdir "${ROOT}/boot"
     mount -t ext2 "/dev/${HD}1" "${ROOT}/boot"
       
     return "${SUCCESS}"

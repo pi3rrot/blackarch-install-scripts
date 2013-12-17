@@ -45,7 +45,7 @@ YELLOW="$(tput bold ; tput setaf 3)"
 NC="$(tput sgr0)" # No Color
 
 # root variable
-ROOT="/tmp/blackarch"
+ROOT="/mnt/blackarch"
 
 
 gprintf() {
@@ -162,9 +162,9 @@ mount_filesystem()
 {
     #TODO: change boot device for user required
     
-    mkdir "${ROOT}"
+    mkdir -p "${ROOT}"
     mount -t ext4 "/dev/${HD}2" "${ROOT}" 
-    mkdir "${ROOT}/boot"
+    mkdir -p "${ROOT}/boot"
     mount -t ext2 "/dev/${HD}1" "${ROOT}/boot"
       
     return "${SUCCESS}"
@@ -179,7 +179,7 @@ install_packages()
 
 install_grub()
 {
-    grub-install --boot-directory="/mnt/${ROOT}/boot" /dev/${HD}
+    grub-install --boot-directory="${ROOT}/boot" /dev/${HD}
 
     return "${SUCCESS}"
 }

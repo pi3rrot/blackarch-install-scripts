@@ -103,6 +103,13 @@ banner()
     return "${SUCCESS}"
 }
 
+check_env()
+{
+    if [ -f /var/lib/pacman/db.lck ]; then
+        cri "Pacman locked - rm /var/lib/pacman/db.lck"
+    fi
+}
+
 # check argument count
 check_argc()
 {
@@ -119,10 +126,10 @@ check_args()
 update_system()
 {
     if ! grep -q "blackarch" /etc/pacman.conf; then
-        gprintf "Adding BlackArch Official Repo"
+        gprintf "[+] Adding BlackArch Official Repo"
         printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
     fi
-    pacman -Syu --noconfirm
+    pacman -Syyu --noconfirm
     
     return "${SUCCESS}"
 }

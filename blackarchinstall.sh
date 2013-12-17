@@ -129,8 +129,10 @@ update_system()
         gprintf "[+] Adding BlackArch Official Repo"
         printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
     fi
-    pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+    # key problem - will be solved later on
     pacman -Syyu --noconfirm
+    pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+    pacman -Syy
     
     return "${SUCCESS}"
 }

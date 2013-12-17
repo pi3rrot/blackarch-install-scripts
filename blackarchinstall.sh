@@ -242,6 +242,7 @@ main()
     check_argc ${*}
     get_opts ${*}
     check_args ${*}
+    check_env
 
     if [ "${opt}" == "install" ]; then
         if [[ "${SEC_ENABLE}" == "false" ]]; then

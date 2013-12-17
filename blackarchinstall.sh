@@ -130,7 +130,7 @@ update_system()
         printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
     fi
     gprintf "[+] Enabling multilib"
-    printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+    sed -i '/[multilib]/{ s/^#//; n; s/^#//; }' /etc/pacman.conf
 
     # key problem - will be solved later on
     pacman -Syyu --noconfirm

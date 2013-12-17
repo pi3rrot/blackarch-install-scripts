@@ -195,6 +195,9 @@ install()
     gprintf "[+] Mounting filesystem..."
     mount_filesystem
 
+    gprintf "[+] Configure filesystem..."
+    genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"
+
     gprintf "[+] Installing BlackArch packages..."
     install_packages
 

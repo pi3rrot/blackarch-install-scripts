@@ -263,13 +263,14 @@ main()
     check_args ${*}
     check_env
 
-    if [ "${opt}" == "install" ]; then
+    # commented arg opt 
+    #if [ "${opt}" == "install" ]; then
         if [[ "${SEC_ENABLE}" == "false" ]]; then
             install
         else
             cri "SEC_ENABLE var active - vim $(pwd)"
         fi
-    fi
+    #fi
     return "${SUCCESS}"
 }
 

@@ -268,7 +268,7 @@ main()
         if [[ "${SEC_ENABLE}" == "false" ]]; then
             install
         else
-            cri "SEC_ENABLE var active - vim $(pwd)"
+            cri "SEC_ENABLE var active - vim /usr/share/blackarch-install-scripts/blackarch-install"
         fi
     #fi
     return "${SUCCESS}"

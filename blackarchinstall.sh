@@ -18,7 +18,7 @@
 ################################################################################
 
 # SECURITY VAR - this version can rm -rf /* your hard drive
-SEC_ENABLE="true"
+SEC_ENABLE="false"
 
 # HD beta var
 HD="sda"
@@ -181,14 +181,21 @@ mount_filesystem()
 
 install_packages()
 {
-    pacstrap -c "${ROOT}" base blackarch
+    pacstrap -c "${ROOT}" base 
 
     return "${SUCCESS}"
 }
 
 install_grub()
 {
-    grub-install --boot-directory="${ROOT}/boot" /dev/${HD}
+    # patching grub2
+    echo "GRUB_DISABLE_SUBMENU=y" >> "${ROOT}"/etc/default/grub
+
+    cp grub-install.sh "${ROOT}/bin"
+    arch-chroot "${ROOT}" grub-install.sh
+    
+    # cleaning up
+    rm -rf "${ROOT}/bin/grub-install.sh"
 
     return "${SUCCESS}"
 }

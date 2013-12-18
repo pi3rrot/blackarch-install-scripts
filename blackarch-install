@@ -267,7 +267,7 @@ main()
         if [[ "${SEC_ENABLE}" == "false" ]]; then
             install
         else
-            cri "SEC_ENABLE var active"
+            cri "SEC_ENABLE var active - vim $(pwd)"
         fi
     fi
     return "${SUCCESS}"

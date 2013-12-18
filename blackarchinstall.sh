@@ -182,13 +182,14 @@ mount_filesystem()
 install_packages()
 {
     pacstrap -c "${ROOT}" base 
+    pacstrap -c "${ROOT}" blackarch
 
     return "${SUCCESS}"
 }
 
 install_grub()
 {
-    # patching grub2
+    # patching grub2 syntax error
     echo "GRUB_DISABLE_SUBMENU=y" >> "${ROOT}"/etc/default/grub
 
     cp grub-install.sh "${ROOT}/bin"

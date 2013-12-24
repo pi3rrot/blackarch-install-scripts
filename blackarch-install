@@ -166,7 +166,7 @@ format_filesystem()
     fi
 
     # boot partition
-    printf "[+] Select partition number for /boot partition [%s1]: " "${HD}"; read a;
+    printf "\n[+] Select partition number for /boot partition [%s1]: " "${HD}"; read a;
     if [ "${a}" == "" ]; then
         boot_part="${HD}1"
     else
@@ -174,7 +174,7 @@ format_filesystem()
         boot_part=${a}
     fi
 
-    printf "[+] Select partition size for /boot [100MB]: "; read a
+    printf "\n[+] Select partition size for /boot [100MB]: "; read a
     if [ "${a}" == "" ]; then
         boot_size="100MB"
     else
@@ -182,7 +182,7 @@ format_filesystem()
     fi
     
     # root partition
-    printf "[+] Select partition number for / partition [%s2]: " "${HD}"; read a
+    printf "\n[+] Select partition number for / partition [%s2]: " "${HD}"; read a
     if [ "${a}" == "" ]; then
         root_part="${HD}2"
     else
@@ -190,16 +190,21 @@ format_filesystem()
         root_part=${a}
     fi
 
-    printf "[+] Select partition size for / [100%% ALL LEFT]: "; read a
+    printf "\n[+] Select partition size for / [100%% ALL LEFT]: "; read a
     if [ "${a}" == "" ]; then
         root_size="100%"
     else
         root_size=${a}
     fi
-
+    
     # about to formating
-    printf "[!!] About to formating /boot into %s and / into %s [y/N]: " "${boot_part}" "${root_part}"
-    read a
+    printf "%s" "${RED}"
+    printf "\n[!!] About to formating: "
+    printf " 	---> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"  
+    printf "    ---> /  %s - Size: %s\n" "${root_part}" "${boot_size}"
+    printf "Are you sure? [y/N]: " "${boot_part}" "${root_part}"; read a
+    printf "%s" "${WHITE}"
+    
     if [ "${a}" == "y" ]; then 
 
         # check if Partition Table already set
@@ -271,7 +276,7 @@ install_grub()
 install()
 {
     wprintf "[+] Updating system..."
-    update_system
+    #update_system
     
     wprintf "[+] Partitioning ${HD}..."
     format_filesystem

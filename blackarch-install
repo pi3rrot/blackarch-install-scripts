@@ -166,7 +166,7 @@ format_filesystem()
     fi
 
     # boot partition
-    printf "[+] Select partition number for /boot partition [/dev/%s1]: " "${HD}"; read a;
+    printf "[+] Select partition number for /boot partition [%s1]: " "${HD}"; read a;
     if [ "${a}" == "" ]; then
         boot_part="${HD}1"
     else
@@ -182,7 +182,7 @@ format_filesystem()
     fi
     
     # root partition
-    printf "[+] Select partition number for / partition [/dev/%s2]: " "${HD}"; read a
+    printf "[+] Select partition number for / partition [%s2]: " "${HD}"; read a
     if [ "${a}" == "" ]; then
         root_part="${HD}2"
     else
@@ -190,7 +190,7 @@ format_filesystem()
         root_part=${a}
     fi
 
-    printf "[+] Select partition size for / [100% = ALL LEFT]: "; read a
+    printf "[+] Select partition size for / [100%% ALL LEFT]: "; read a
     if [ "${a}" == "" ]; then
         root_size="100%"
     else
@@ -198,7 +198,7 @@ format_filesystem()
     fi
 
     # about to formating
-    printf "[!!] About to formating /boot = %s / = %s [y/N]: " "${boot_part}" "${root_part}"
+    printf "[!!] About to formating /boot into %s and / into %s [y/N]: " "${boot_part}" "${root_part}"
     read a
     if [ "${a}" == "y" ]; then 
 

@@ -24,7 +24,7 @@ SEC_ENABLE="true"
 HD="sda"
 
 # blackarchinstall version
-VERSION="blackarchinstall v0.1"
+VERSION="blackarchinstall v0.2"
 
 # true / false
 FALSE="0"
@@ -153,23 +153,72 @@ format_filesystem()
 {
     # TODO: add swap 
 
+    printf "%s" "${WHITE}"
+    
+    printf "[+] Type the device for install [/dev/sda]: "; read a
+
+    if [ "${a}" == "" ]; then
+        HD="/dev/sda"
+    else
+        HD="${a}"
+    fi
+
+    # check if Partition Table already set
+    #parted "/dev/${HD}" print | grep -q "Partition Table"
     parted -s "/dev/${HD}" mklabel msdos
 
     # boot partition
-    parted -a optimal "/dev/${HD}" mkpart primary 0% 100MB
-    # partition bootable
-    parted "/dev/${HD}" set 1 boot on
-    # root partition
-    parted -a optimal "/dev/${HD}" mkpart primary 100MB 100%
+    printf "[+] Select partition number for /boot partition [/dev/%s1]: " "${HD}"; read a;
+    if [ "${a}" == "" ]; then
+        boot_part="/dev/${HD}1"
+    else
+        # parse user input errors
+        boot_part=${a}
+    fi
 
-    # formating
-    mkfs.ext2 -L boot /dev/sda1
-    mkfs.ext4 -L root /dev/sda2
-
-    wprintf "[+] Created boot partition: /dev/sda1 - ext2"
-    wprintf "[+] Created root partition: /dev/sda2 - ext4"
-
+    printf "[+] Select partition size for /boot [100MB]: "; read a
+    if [ "${a}" == "" ]; then
+        boot_size="100MB"
+    else
+        boot_size=${a}
+    fi
     
+    parted -a optimal "${boot_part}" mkpart primary 0% "${boot_size}"
+    
+    # partition bootable
+    parted "${boot_part}" set 1 boot on
+    
+    # root partition
+    printf "[+] Select partition number for / partition [/dev/%s2]: " "${HD}"; read a
+    if [ "${a}" == "" ]; then
+        root_part="/dev/${HD}"
+    else
+        # parse user input errors
+        root_part=${a}
+    fi
+    printf "[+] Select partition size for / [100% = ALL LEFT]: "; read a
+    if [ "${a}" == "" ]; then
+        root_size="100%"
+    else
+        root_size=${a}
+    fi
+    parted -a optimal "${root_part}" mkpart primary 100MB "${root_size}"
+
+    # about to formating
+    printf "[+] About to formating /boot = %s / = %s [y/N]: " "${boot_part}" "${root_part}"
+    read a
+    if [ "${a}" == "y" ]; then 
+        mkfs.ext2 -L boot "${boot_part}"
+        mkfs.ext4 -L root "${root_part}"
+
+        printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
+        printf "[+] Created root partition: %s - ext4\n" "${root_part}"
+    else
+        cri "Format cancelled"
+    fi
+
+    printf "%s" "${NC}"
+
     return "${SUCCESS}"
 }
 

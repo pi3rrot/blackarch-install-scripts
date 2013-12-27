@@ -47,6 +47,8 @@ NC="$(tput sgr0)" # No Color
 # root variable
 ROOT="/mnt/blackarch"
 
+# BA REPO
+BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 
 wprintf() {
     fmt=$1
@@ -127,7 +129,7 @@ update_system()
 {
     if ! grep -q "blackarch" /etc/pacman.conf; then
         wprintf "[+] Adding BlackArch Official Repo"
-        printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
+        printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
     fi
 
     if [ "$(uname -m)" == "x86_64" ]; then
@@ -198,9 +200,9 @@ install_grub()
 
     # path depends on git clone or blackarch live source
     if [ -f grub-install.sh ]; then
-	grub_file="grub-install.sh"
+	    grub_file="grub-install.sh"
     else
-	grub_file="/usr/share/blackarch-install-scripts/grub-install.sh"
+	    grub_file="/usr/share/blackarch-install-scripts/grub-install.sh"
     fi 
 
     cp "${grub_file}" "${ROOT}/bin"

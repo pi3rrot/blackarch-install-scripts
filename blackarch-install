@@ -155,22 +155,20 @@ format_filesystem()
 
     printf "%s" "${WHITE}"
     
+
+    # user input settings
     printf "[+] Type the device for install [/dev/sda]: "; read a
 
     if [ "${a}" == "" ]; then
         HD="/dev/sda"
     else
-        HD="${a}"
+        HD=${a}
     fi
-
-    # check if Partition Table already set
-    #parted "/dev/${HD}" print | grep -q "Partition Table"
-    parted -s "/dev/${HD}" mklabel msdos
 
     # boot partition
     printf "[+] Select partition number for /boot partition [/dev/%s1]: " "${HD}"; read a;
     if [ "${a}" == "" ]; then
-        boot_part="/dev/${HD}1"
+        boot_part="${HD}1"
     else
         # parse user input errors
         boot_part=${a}
@@ -183,31 +181,38 @@ format_filesystem()
         boot_size=${a}
     fi
     
-    parted -a optimal "${boot_part}" mkpart primary 0% "${boot_size}"
-    
-    # partition bootable
-    parted "${boot_part}" set 1 boot on
-    
     # root partition
     printf "[+] Select partition number for / partition [/dev/%s2]: " "${HD}"; read a
     if [ "${a}" == "" ]; then
-        root_part="/dev/${HD}"
+        root_part="${HD}2"
     else
         # parse user input errors
         root_part=${a}
     fi
+
     printf "[+] Select partition size for / [100% = ALL LEFT]: "; read a
     if [ "${a}" == "" ]; then
         root_size="100%"
     else
         root_size=${a}
     fi
-    parted -a optimal "${root_part}" mkpart primary 100MB "${root_size}"
 
     # about to formating
-    printf "[+] About to formating /boot = %s / = %s [y/N]: " "${boot_part}" "${root_part}"
+    printf "[!!] About to formating /boot = %s / = %s [y/N]: " "${boot_part}" "${root_part}"
     read a
     if [ "${a}" == "y" ]; then 
+
+        # check if Partition Table already set
+        #parted "/dev/${HD}" print | grep -q "Partition Table"
+        parted -s "${HD}" mklabel msdos
+
+        parted -a optimal "${boot_part}" mkpart primary 0% "${boot_size}"
+    
+        # partition bootable
+        parted "${boot_part}" set 1 boot on
+        
+        parted -a optimal "${root_part}" mkpart primary 100MB "${root_size}"
+ 
         mkfs.ext2 -L boot "${boot_part}"
         mkfs.ext4 -L root "${root_part}"
 

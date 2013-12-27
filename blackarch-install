@@ -48,7 +48,7 @@ NC="$(tput sgr0)" # No Color
 ROOT="/mnt/blackarch"
 
 
-gprintf() {
+wprintf() {
     fmt=$1
     shift
     printf "%s${fmt}%s\n" "${WHITE}" "$@" "${NC}"
@@ -126,10 +126,10 @@ check_args()
 update_system()
 {
     if ! grep -q "blackarch" /etc/pacman.conf; then
-        gprintf "[+] Adding BlackArch Official Repo"
+        wprintf "[+] Adding BlackArch Official Repo"
         printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
     fi
-    gprintf "[+] Enabling multilib"
+    wprintf "[+] Enabling multilib"
     printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf
 
     #fix this
@@ -160,8 +160,8 @@ format_filesystem()
     mkfs.ext2 -L boot /dev/sda1
     mkfs.ext4 -L root /dev/sda2
 
-    gprintf "[+] Created boot partition: /dev/sda1 - ext2"
-    gprintf "[+] Created root partition: /dev/sda2 - ext4"
+    wprintf "[+] Created boot partition: /dev/sda1 - ext2"
+    wprintf "[+] Created root partition: /dev/sda2 - ext4"
 
     
     return "${SUCCESS}"
@@ -210,22 +210,22 @@ install_grub()
 
 install()
 {
-    gprintf "[+] Updating system..."
+    wprintf "[+] Updating system..."
     update_system
     
-    gprintf "[+] Partitioning ${HD}..."
+    wprintf "[+] Partitioning ${HD}..."
     format_filesystem
 
-    gprintf "[+] Mounting filesystem..."
+    wprintf "[+] Mounting filesystem..."
     mount_filesystem
 
-    gprintf "[+] Installing BlackArch packages..."
+    wprintf "[+] Installing BlackArch packages..."
     install_packages
     
-    gprintf "[+] Generating fstab..."
+    wprintf "[+] Generating fstab..."
     genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"
 
-    gprintf "[+] Installing grub..."
+    wprintf "[+] Installing grub..."
     install_grub
 
     return "${SUCCESS}"

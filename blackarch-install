@@ -129,14 +129,18 @@ update_system()
         wprintf "[+] Adding BlackArch Official Repo"
         printf '[blackarch]\nServer = http://www.blackarch.org/pub/blackarch/$arch\n' >> /etc/pacman.conf
     fi
-    wprintf "[+] Enabling multilib"
-    printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf
+
+    if [ "$(uname -m)" == "x86_64" ]; then
+        wprintf "[+] Enabling multilib"
+        printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf
+    fi
 
     #fix this
     #sed -i '/[multilib]/{ s/^#//; n; s/^#//; }' /etc/pacman.conf
 
     # key problem - will be solved later on
     pacman -Syyu --noconfirm
+    pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
     pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
     pacman -Syy
     

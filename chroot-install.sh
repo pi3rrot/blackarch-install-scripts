@@ -17,9 +17,6 @@
 #                                                                              #
 ################################################################################
 
-# SECURITY VAR - this version can rm -rf /* your hard drive
-SEC_ENABLE="false"
-
 # HD beta var
 HD="sda"
 
@@ -133,14 +130,17 @@ update_system()
 install_packages()
 {
     pacman -S blackarch
-    pacman -S grub --noconfirm
-
     return "${SUCCESS}"
 }
 
 install_grub()
 {
-    grub-install /dev/sda
+    pacman -S grub --noconfirm
+
+    wprintf "[+] Patching grub2 syntax error"
+    printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
+
+    grub-install "/dev/${HD}"
     grub-mkconfig -o /boot/grub/grub.cfg
 
     return "${SUCCESS}"

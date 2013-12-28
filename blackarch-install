@@ -18,7 +18,7 @@
 ################################################################################
 
 # SECURITY VAR - this version can rm -rf /* your hard drive
-SEC_ENABLE="false"
+SEC_ENABLE="true"
 
 # HD beta var
 HD="sda"
@@ -283,9 +283,6 @@ install()
 
     wprintf "[+] Generating resolv.conf"
     cp /etc/resolv.conf "${ROOT}/etc/"
-
-    wprintf "[+] Patching grub2 syntax error"
-    printf "GRUB_DISABLE_SUBMENU=y\n" >> "${ROOT}"/etc/default/grub
 
     wprintf "[+] Installing chroot system..."
     install_chroot

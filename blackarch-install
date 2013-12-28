@@ -18,7 +18,7 @@
 ################################################################################
 
 # SECURITY VAR - this version can rm -rf /* your hard drive
-SEC_ENABLE="true"
+SEC_ENABLE="false"
 
 # HD beta var
 HD="sda"
@@ -199,10 +199,10 @@ format_filesystem()
     
     # about to formating
     printf "%s" "${RED}"
-    printf "\n[!!] About to formating: "
+    printf "\n[!!] About to formating: \n"
     printf " 	---> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"  
-    printf "    ---> /  %s - Size: %s\n" "${root_part}" "${boot_size}"
-    printf "Are you sure? [y/N]: " "${boot_part}" "${root_part}"; read a
+    printf "    ---> /  %s - Size: %s\n" "${root_part}" "${root_size}"
+    printf "Are you sure? [y/N]: "; read a
     printf "%s" "${WHITE}"
     
     if [ "${a}" == "y" ]; then 

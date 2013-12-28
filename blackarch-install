@@ -246,7 +246,9 @@ mount_filesystem()
 
 install_packages()
 {
+    wprintf "\t--> ArchLinux Base"
     pacstrap -c "${ROOT}" base 
+    wprintf "\t--> BlackArch Linux Packages"
     pacstrap -c "${ROOT}" blackarch
 
     return "${SUCCESS}"
@@ -284,7 +286,7 @@ install()
     wprintf "[+] Mounting filesystem..."
     mount_filesystem
 
-    wprintf "[+] Installing BlackArch packages..."
+    wprintf "[+] Installing packages..."
     install_packages
     
     wprintf "[+] Generating fstab..."

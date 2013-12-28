@@ -20,11 +20,15 @@
 # SECURITY VAR - this version can rm -rf /* your hard drive
 SEC_ENABLE="true"
 
-# HD beta var
-HD="sda"
+
+# root variable
+ROOT="/mnt/blackarch"
+
+# BA REPO
+BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 
 # blackarchinstall version
-VERSION="v0.2"
+VERSION="v0.2beta"
 
 # true / false
 FALSE="0"
@@ -44,11 +48,6 @@ RED="$(tput bold; tput setaf 1)"
 YELLOW="$(tput bold ; tput setaf 3)"
 NC="$(tput sgr0)" # No Color
 
-# root variable
-ROOT="/mnt/blackarch"
-
-# BA REPO
-BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 
 wprintf() {
     fmt=$1
@@ -190,7 +189,7 @@ format_filesystem()
 
     # about to formating
     printf "%s" "${RED}"
-    printf "\n[!!] About to formating: \n"
+    printf "\n[!!] About to format partitions:\n"
     printf "\t---> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
     printf "\t---> /  %s - Size: %s\n" "${root_part}" "${root_size}"
     printf "Are you sure? [y/N]: "; read a
@@ -207,7 +206,7 @@ format_filesystem()
         # partition bootable
         parted "${boot_part}" set 1 boot on
 
-        parted -a optimal "${root_part}" mkpart primary 100MB "${root_size}"
+        parted -a optimal "${root_part}" mkpart primary "${boot_size}" "${root_size}"
 
         mkfs.ext2 -L boot "${boot_part}1"
         mkfs.ext4 -L root "${root_part}2"
@@ -334,7 +333,7 @@ main()
         if [[ "${SEC_ENABLE}" == "false" ]]; then
             install
         else
-            cri "SEC_ENABLE var active - vim /usr/share/blackarch-install-scripts/blackarch-install"
+            cri "SEC_ENABLE var active - vim blackarch-install"
         fi
     #fi
     return "${SUCCESS}"

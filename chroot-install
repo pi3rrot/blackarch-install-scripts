@@ -4,7 +4,7 @@
 # blackarchinstall - Blackarch Install                                         #
 #                                                                              #
 # FILE                                                                         #
-# chroot-install.sh                                                            #
+# chroot-install                                                               #
 #                                                                              #
 # DATE                                                                         #
 # 2013-12-16                                                                   #
@@ -16,12 +16,6 @@
 # nrz@nullsecurity.net                                                         #
 #                                                                              #
 ################################################################################
-
-# HD beta var
-HD="sda"
-
-# blackarchinstall version
-VERSION="v0.2"
 
 # true / false
 FALSE="0"
@@ -146,6 +140,16 @@ install_grub()
     return "${SUCCESS}"
 }
 
+configure_users()
+{
+    wprintf "[+] Setup root password:"
+    passwd
+
+    #TODO: normal user account
+
+    return "${SUCCESS}"
+}
+
 install()
 {
     wprintf "[+] Updating system..."
@@ -156,6 +160,9 @@ install()
 
     wprintf "[+] Installing grub..."
     install_grub
+
+    wprintf "[+] Configure system users..."
+    configure_users
 
     return "${SUCCESS}"
 }

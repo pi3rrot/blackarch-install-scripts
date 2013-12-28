@@ -247,30 +247,27 @@ mount_filesystem()
 install_packages()
 {
     wprintf "\t--> ArchLinux Base"
-    pacstrap -c "${ROOT}" base 
+    pacstrap -c "${ROOT}" base
     #wprintf "\t--> BlackArch Linux Packages"
     #pacstrap -c "${ROOT}" blackarch
 
     return "${SUCCESS}"
 }
 
-install_grub()
+install_chroot()
 {
-    # patching grub2 syntax error
-    echo "GRUB_DISABLE_SUBMENU=y" >> "${ROOT}"/etc/default/grub
-
     # path depends on git clone or blackarch live source
-    if [ -f grub-install.sh ]; then
-	    grub_file="grub-install.sh"
+    if [ -f chroot-install.sh ]; then
+	    chroot_file="chroot-install.sh"
     else
-	    grub_file="/usr/share/blackarch-install-scripts/grub-install.sh"
+	    chroot_file="/usr/share/blackarch-install-scripts/grub-install.sh"
     fi
 
-    cp "${grub_file}" "${ROOT}/bin"
-    arch-chroot "${ROOT}" "${grub_file}"
+    cp "${chroot_file}" "${ROOT}/bin"
+    arch-chroot "${ROOT}" "${chroot_file}"
 
     # cleaning up
-    rm -rf "${ROOT}/bin/grub-install.sh"
+    rm -rf "${ROOT}/bin/chroot-install.sh"
 
     return "${SUCCESS}"
 }
@@ -291,15 +288,18 @@ install()
 
     wprintf "[+] Generating fstab..."
     genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"
-   
+
     wprintf "[+] Generating pacman.conf"
-    cp -Rf /etc/pacman* "${ROOT}/etc/" 
+    cp -Rf /etc/pacman* "${ROOT}/etc/"
 
     wprintf "[+] Generating resolv.conf"
     cp /etc/resolv.conf "${ROOT}/etc/"
 
-    wprintf "[+] Installing grub..."
-    install_grub
+    wprintf "[+] Patching grub2 syntax error"
+    printf "GRUB_DISABLE_SUBMENU=y\n" >> "${ROOT}"/etc/default/grub
+
+    wprintf "[+] Installing chroot system..."
+    install_chroot
 
     return "${SUCCESS}"
 }

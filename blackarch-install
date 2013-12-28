@@ -24,7 +24,7 @@ SEC_ENABLE="false"
 HD="sda"
 
 # blackarchinstall version
-VERSION="blackarchinstall v0.2"
+VERSION="v0.2"
 
 # true / false
 FALSE="0"
@@ -100,7 +100,7 @@ EOF
 # leet banner, very important
 banner()
 {
-    printf "%s--==[ BlackArch Install ]==--%s\n" "${YELLOW}" "${NC}"
+    printf "%s--==[ BlackArch Install %s ]==--%s\n" "${YELLOW}" "${VERSION}" "${NC}"
 
     return "${SUCCESS}"
 }
@@ -168,7 +168,7 @@ format_filesystem()
     # boot partition
     printf "\n[+] Select partition number for /boot partition [%s1]: " "${HD}"; read a;
     if [ "${a}" == "" ]; then
-        boot_part="${HD}1"
+        boot_part="${HD}"
     else
         # parse user input errors
         boot_part=${a}
@@ -184,15 +184,15 @@ format_filesystem()
     # root partition
     printf "\n[+] Select partition number for / partition [%s2]: " "${HD}"; read a
     if [ "${a}" == "" ]; then
-        root_part="${HD}2"
+        root_part="${HD}"
     else
         # parse user input errors
         root_part=${a}
     fi
 
-    printf "\n[+] Select partition size for / [100%% ALL LEFT]: "; read a
+    printf "\n[+] Select partition size for / [10GB]: "; read a
     if [ "${a}" == "" ]; then
-        root_size="100%"
+        root_size="10GB"
     else
         root_size=${a}
     fi
@@ -218,8 +218,8 @@ format_filesystem()
         
         parted -a optimal "${root_part}" mkpart primary 100MB "${root_size}"
  
-        mkfs.ext2 -L boot "${boot_part}"
-        mkfs.ext4 -L root "${root_part}"
+        mkfs.ext2 -L boot "${boot_part}1"
+        mkfs.ext4 -L root "${root_part}2"
 
         printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
         printf "[+] Created root partition: %s - ext4\n" "${root_part}"
@@ -237,9 +237,9 @@ mount_filesystem()
     #TODO: change boot device for user required
     
     mkdir -p "${ROOT}"
-    mount -t ext4 "/dev/${HD}2" "${ROOT}" 
+    mount -t ext4 "${HD}2" "${ROOT}" 
     mkdir -p "${ROOT}/boot"
-    mount -t ext2 "/dev/${HD}1" "${ROOT}/boot"
+    mount -t ext2 "${HD}1" "${ROOT}/boot"
       
     return "${SUCCESS}"
 }
@@ -276,7 +276,7 @@ install_grub()
 install()
 {
     wprintf "[+] Updating system..."
-    #update_system
+    update_system
     
     wprintf "[+] Partitioning ${HD}..."
     format_filesystem

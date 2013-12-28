@@ -127,10 +127,7 @@ check_args()
 
 update_system()
 {
-    if ! grep -q "blackarch" /etc/pacman.conf; then
-        wprintf "[+] Adding BlackArch Official Repo"
-        printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
-    fi
+    pacman -Syy
 
     if [ "$(uname -m)" == "x86_64" ]; then
         wprintf "[+] Enabling multilib"
@@ -139,12 +136,6 @@ update_system()
 
     #fix this
     #sed -i '/[multilib]/{ s/^#//; n; s/^#//; }' /etc/pacman.conf
-
-    # key problem - will be solved later on
-    pacman -Syyu --noconfirm
-    pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-    pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-    pacman -Syy
 
     return "${SUCCESS}"
 }
@@ -248,8 +239,6 @@ install_packages()
 {
     wprintf "\t--> ArchLinux Base"
     pacstrap -c "${ROOT}" base
-    #wprintf "\t--> BlackArch Linux Packages"
-    #pacstrap -c "${ROOT}" blackarch
 
     return "${SUCCESS}"
 }
@@ -260,7 +249,7 @@ install_chroot()
     if [ -f chroot-install.sh ]; then
 	    chroot_file="chroot-install.sh"
     else
-	    chroot_file="/usr/share/blackarch-install-scripts/grub-install.sh"
+	    chroot_file="/usr/share/blackarch-install-scripts/chroot-install.sh"
     fi
 
     cp "${chroot_file}" "${ROOT}/bin"

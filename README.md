@@ -1,8 +1,8 @@
 Blackarch Install
 -----------------
 
-Install From ArchLinux
-------------------------
+Install From ArchLinux - v0.1 Release
+-------------------------------------
    1. Download ISO - https://www.archlinux.org/download/
 	-> i.e. http://archlinux.c3sl.ufpr.br/iso/2013.12.01/archlinux-2013.12.01-dual.iso
    2. Create Vbox or VMWare Box for it - Do not use this script in real ENV.

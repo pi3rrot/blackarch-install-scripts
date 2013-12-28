@@ -247,9 +247,9 @@ mount_filesystem()
 install_packages()
 {
     wprintf "\t--> ArchLinux Base"
-    pacstrap -c "${ROOT}" base
-    wprintf "\t--> BlackArch Linux Packages"
-    pacstrap -c "${ROOT}" blackarch
+    pacstrap -c "${ROOT}" base 
+    #wprintf "\t--> BlackArch Linux Packages"
+    #pacstrap -c "${ROOT}" blackarch
 
     return "${SUCCESS}"
 }
@@ -291,6 +291,12 @@ install()
 
     wprintf "[+] Generating fstab..."
     genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"
+   
+    wprintf "[+] Generating pacman.conf"
+    cp -Rf /etc/pacman* "${ROOT}/etc/" 
+
+    wprintf "[+] Generating resolv.conf"
+    cp /etc/resolv.conf "${ROOT}/etc/"
 
     wprintf "[+] Installing grub..."
     install_grub

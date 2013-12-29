@@ -187,18 +187,18 @@ format_filesystem()
         root_size=${a}
     fi
 
-    # about to formating
+    # about to format
     printf "%s" "${RED}"
     printf "\n[!!] About to format partitions:\n"
     printf "\t---> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
-    printf "\t---> /  %s - Size: %s\n" "${root_part}" "${root_size}"
+    printf "\t---> /     %s - Size: %s\n" "${root_part}" "${root_size}"
     printf "Are you sure? [y/N]: "; read a
     printf "%s" "${WHITE}"
 
     if [ "${a}" == "y" ]; then
 
         # check if Partition Table already set
-        #parted "/dev/${HD}" print | grep -q "Partition Table"
+        # parted "/dev/${HD}" print | grep -q "Partition Table"
         parted -s "${HD}" mklabel msdos
 
         parted -a optimal "${boot_part}" mkpart primary 0% "${boot_size}"
@@ -225,6 +225,7 @@ format_filesystem()
 mount_filesystem()
 {
     #TODO: change boot device for user required
+    #TODO: optonal file system
 
     mkdir -p "${ROOT}"
     mount -t ext4 "${HD}2" "${ROOT}"
@@ -236,7 +237,7 @@ mount_filesystem()
 
 install_packages()
 {
-    wprintf "\t--> ArchLinux Base"
+    wprintf "  --> ArchLinux Base"
     pacstrap -c "${ROOT}" base
 
     return "${SUCCESS}"
@@ -244,18 +245,13 @@ install_packages()
 
 install_chroot()
 {
-    # path depends on git clone or blackarch live source
-    if [ -f chroot-install.sh ]; then
-	    chroot_file="chroot-install.sh"
-    else
-	    chroot_file="/usr/share/blackarch-install-scripts/chroot-install.sh"
-    fi
+	chroot_file="chroot-install"
 
     cp "${chroot_file}" "${ROOT}/bin"
     arch-chroot "${ROOT}" "${chroot_file}"
 
     # cleaning up
-    rm -rf "${ROOT}/bin/chroot-install.sh"
+    rm -rf "${ROOT}/bin/${chroot_file}"
 
     return "${SUCCESS}"
 }

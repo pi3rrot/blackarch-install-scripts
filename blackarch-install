@@ -214,7 +214,8 @@ format_filesystem()
         printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
         printf "[+] Created root partition: %s - ext4\n" "${root_part}"
     else
-        cri "Format cancelled"
+        format_filesystem
+        return "${SUCCESS}"
     fi
 
     printf "%s" "${NC}"

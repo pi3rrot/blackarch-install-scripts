@@ -134,7 +134,7 @@ install_grub()
     wprintf "[+] Patching grub2 syntax error"
     printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
 
-    grub-install "/dev/${HD}"
+    grub-install "${HD}"
     grub-mkconfig -o /boot/grub/grub.cfg
 
     return "${SUCCESS}"
@@ -163,6 +163,9 @@ install()
 
     wprintf "[+] Configure system users..."
     configure_users
+
+    printf "%s[+] BlackArch Linux Installed Succesfully!%s\n" "${RED}" "${NC}"
+
 
     return "${SUCCESS}"
 }

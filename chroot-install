@@ -77,7 +77,9 @@ usage()
 cat <<EOF
 Usage: $0 <arg> | <misc>
 OPTIONS:
-    -i: install
+    -l: liveCD install
+    -r: repository install
+    -b: blackman install
 MISC:
     -V: print version and exit
     -H: print help and exit
@@ -121,7 +123,18 @@ update_system()
     return "${SUCCESS}"
 }
 
-install_packages()
+# testing
+install_packages_blackman()
+{
+    pacman -S git --noconfirm
+    git clone https://github.com/nrzizrn/blackman
+    cd blackman
+    ./blackman -a
+
+    return "${SUCCESS}"
+}
+
+install_packages_repo()
 {
     pacman -S blackarch
     return "${SUCCESS}"
@@ -152,11 +165,20 @@ configure_users()
 
 install()
 {
+    menu_opt=${1}
+
     wprintf "[+] Updating system..."
     update_system
 
     wprintf "[+] Installing packages..."
-    install_packages
+    case "${menu_opt}" in
+        "repository")
+            install_packages_repository
+            ;;
+        "blackman")
+            install_packages_blackman
+            ;;
+    esac
 
     wprintf "[+] Installing grub..."
     install_grub
@@ -173,12 +195,14 @@ install()
 # parse command line options
 get_opts()
 {
-    while getopts ivVH flags
+    while getopts rbvVH flags
     do
         case "${flags}" in
-            i)
-                #optarg=${OPTARG}
-                opt="install"
+            r)
+                opt_arg="repository"
+                ;;
+            b)
+                opt_arg="blackman"
                 ;;
             v)
                 VERBOSE="/dev/stdout"
@@ -208,8 +232,7 @@ main()
     check_args ${*}
     check_env
 
-    # commented arg opt
-    install
+    install "${opt_arg}"
 
     return "${SUCCESS}"
 }

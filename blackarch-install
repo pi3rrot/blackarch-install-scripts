@@ -18,7 +18,7 @@
 ################################################################################
 
 # SECURITY VAR - this version can rm -rf /* your hard drive
-SEC_ENABLE="true"
+SEC_ENABLE="false"
 
 
 # root variable
@@ -259,6 +259,8 @@ install_chroot()
 
 install()
 {
+    menu_opt=${1}
+
     wprintf "[+] Updating system..."
     update_system
 
@@ -281,7 +283,18 @@ install()
     cp /etc/resolv.conf "${ROOT}/etc/"
 
     wprintf "[+] Installing chroot system..."
-    install_chroot
+
+    case "${menu_opt}" in
+        "1")
+            err "Not Implemented Yet"
+            ;;
+        "2")
+            install_chroot "-r"
+            ;;
+        "3")
+            install_chroot "-b"
+            ;;
+    esac
 
     return "${SUCCESS}"
 }
@@ -315,6 +328,21 @@ get_opts()
     return "${SUCCESS}"
 }
 
+install_menu()
+{
+    printf "%s" "${WHITE}"
+    while ! [ "${menu_opt}" == "1" -o "${menu_opt}" == "2" -o "${menu_opt}" == "3" ]; do
+        printf "[+] Select Install Mode:\n"
+        printf "    1. Install from LiveCD.\n"
+        printf "    2. Install from BlackArch Official Repository.\n"
+        printf "    3. Install from Blackman.\n"
+        printf "Make a choice: "; read menu_opt
+    done
+
+    printf "%s" "${NC}"
+
+    return "${SUCCESS}"
+}
 
 # controller and program flow
 main()
@@ -328,7 +356,8 @@ main()
     # commented arg opt
     #if [ "${opt}" == "install" ]; then
         if [[ "${SEC_ENABLE}" == "false" ]]; then
-            install
+            install_menu
+            install "${menu_opt}"
         else
             cri "SEC_ENABLE var active - vim blackarch-install"
         fi

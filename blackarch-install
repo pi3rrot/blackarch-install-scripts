@@ -346,6 +346,7 @@ install_menu()
         printf "    2. Install from BlackArch Official Repository.\n"
         printf "    3. Install from Blackman.\n"
         printf "Make a choice: "; read menu_opt
+        printf "%s"
     done
 
     printf "%s" "${NC}"

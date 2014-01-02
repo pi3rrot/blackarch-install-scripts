@@ -126,12 +126,12 @@ check_args()
 
 update_system()
 {
-    pacman -Syy
-
     if [ "$(uname -m)" == "x86_64" ]; then
         wprintf "[+] Enabling multilib"
         printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf
     fi
+
+    pacman -Syy
 
     #fix this
     #sed -i '/[multilib]/{ s/^#//; n; s/^#//; }' /etc/pacman.conf

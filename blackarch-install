@@ -259,9 +259,6 @@ install_chroot()
 
     # cleaning up
     rm -rf "${ROOT}/bin/${chroot_file}"
-    umount "${1}/proc"
-    umount "${1}/dev"
-    umount "${1}/sys"
 
     return "${SUCCESS}"
 }

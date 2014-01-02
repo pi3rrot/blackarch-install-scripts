@@ -80,6 +80,7 @@ OPTIONS:
     -l: liveCD install
     -r: repository install
     -b: blackman install
+    -d: device target [/dev/sda]
 MISC:
     -V: print version and exit
     -H: print help and exit
@@ -154,7 +155,7 @@ install_grub()
 
     grub-install "${HD}"
     grub-mkconfig -o /boot/grub/grub.cfg
-    update-grub
+    #update-grub
 
     return "${SUCCESS}"
 }
@@ -208,7 +209,7 @@ install()
 # parse command line options
 get_opts()
 {
-    while getopts rbvVH flags
+    while getopts rbd:vVH flags
     do
         case "${flags}" in
             r)
@@ -217,6 +218,8 @@ get_opts()
             b)
                 opt_arg="blackman"
                 ;;
+            d)
+                HD=${OPTARG}
             v)
                 VERBOSE="/dev/stdout"
                 ;;

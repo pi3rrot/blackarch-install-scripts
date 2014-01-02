@@ -255,7 +255,7 @@ install_chroot()
     mount --rbind /dev "${ROOT}/dev"
     mount --rbind /sys "${ROOT}/sys"
 
-    chroot "${ROOT}" "${chroot_file}" "${mode}"
+    chroot "${ROOT}" "${chroot_file}" "${mode}" -d "${HD}"
 
     # cleaning up
     rm -rf "${ROOT}/bin/${chroot_file}"

@@ -126,7 +126,7 @@ update_system()
 # testing
 install_packages_blackman()
 {
-    pacman -S git --noconfirm
+    command -v git >/dev/null 2>&1 || pacman -S git --noconfirm
     cd /usr/share/
     git clone https://github.com/nrzizrn/blackman
     ln -s /usr/share/blackman/blackman /usr/bin

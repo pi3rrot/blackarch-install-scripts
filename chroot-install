@@ -220,6 +220,7 @@ get_opts()
                 ;;
             d)
                 HD=${OPTARG}
+                ;;
             v)
                 VERBOSE="/dev/stdout"
                 ;;

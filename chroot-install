@@ -149,12 +149,15 @@ install_grub()
     wprintf "[+] Patching grub2 syntax error"
     printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
 
-    # adding blackarch splass
-    #printf 'GRUB_BACKGROUND="/boot/splash.png"' >> /etc/default/grub
+    # adding blackarch splash
     mv /boot/splash.png /boot/grub/
+    printf 'GRUB_BACKGROUND="/boot/splash.png"\n' >> /etc/default/grub
 
-    grub-install "${HD}"
     grub-mkconfig -o /boot/grub/grub.cfg
+    sed 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
+        /boot/grub/grub.cfg
+    grub-install "${HD}"
+
     #update-grub
 
     return "${SUCCESS}"
@@ -172,6 +175,7 @@ configure_users()
         useradd -m -p "" -g users \
             -G "adm,audio,floppy,log,network,rfkill,scanner,storage,optical,power,wheel" \
             -s /usr/bin/zsh "${user}" && printf "[+] User '%s' created\n" "${user}"
+        passwd "${user}"
     fi
     printf "%s" "${NC}"
 

@@ -27,6 +27,11 @@ ROOT="/mnt/blackarch"
 # BA REPO
 BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 
+# Defaults Partitioning
+HD="/dev/sda"
+boot_part="${HD}" # next to fix - parsing fdisk
+boot_size="100MB"
+
 # blackarchinstall version
 VERSION="v0.2beta"
 
@@ -149,27 +154,14 @@ format_filesystem()
     # user input settings
     printf "[+] Type the device for install [/dev/sda]: "; read a
 
-    if [ "${a}" == "" ]; then
-        HD="/dev/sda"
-    else
-        HD=${a}
-    fi
+    [ "${a}" == "" ] && HD=${a}
 
     # boot partition
     printf "\n[+] Select partition number for /boot partition [%s1]: " "${HD}"; read a;
-    if [ "${a}" == "" ]; then
-        boot_part="${HD}"
-    else
-        # parse user input errors
-        boot_part=${a}
-    fi
+    [ "${a}" == "" ] && boot_part=${a}
 
     printf "\n[+] Select partition size for /boot [100MB]: "; read a
-    if [ "${a}" == "" ]; then
-        boot_size="100MB"
-    else
-        boot_size=${a}
-    fi
+    [ "${a}" == "" ] && boot_size=${a}
 
     # root partition
     printf "\n[+] Select partition number for / partition [%s2]: " "${HD}"; read a

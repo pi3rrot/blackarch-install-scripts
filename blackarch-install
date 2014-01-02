@@ -246,13 +246,22 @@ install_packages()
 
 install_chroot()
 {
+    mode=${1}
 	chroot_file="chroot-install"
 
     cp "${chroot_file}" "${ROOT}/bin"
-    arch-chroot "${ROOT}" "${chroot_file}"
+
+    mount -t proc proc "${ROOT}/proc"
+    mount --rbind /dev "${ROOT}/dev"
+    mount --rbind /sys "${ROOT}/sys"
+
+    chroot "${ROOT}" "${chroot_file}" "${mode}"
 
     # cleaning up
     rm -rf "${ROOT}/bin/${chroot_file}"
+    umount "${1}/proc"
+    umount "${1}/dev"
+    umount "${1}/sys"
 
     return "${SUCCESS}"
 }

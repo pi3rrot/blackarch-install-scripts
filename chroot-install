@@ -175,12 +175,11 @@ install()
 {
     menu_opt=${1}
 
-    wprintf "[+] Updating system..."
-    update_system
-
     wprintf "[+] Installing packages..."
     case "${menu_opt}" in
         "repository")
+            wprintf "[+] Updating system..."
+            update_system
             install_packages_repository
             ;;
         "blackman")
@@ -188,13 +187,13 @@ install()
             ;;
     esac
 
-    wprintf "[+] Installing grub..."
-    install_grub
-
     wprintf "[+] Configure system users..."
     configure_users
 
-    printf "%s[+] BlackArch Linux Installed Succesfully!%s\n" "${RED}" "${NC}"
+    wprintf "[+] Installing grub..."
+    install_grub
+
+    printf "%s[+] BlackArch Linux ready!%s\n" "${RED}" "${NC}"
 
 
     return "${SUCCESS}"

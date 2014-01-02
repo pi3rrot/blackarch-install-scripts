@@ -236,7 +236,7 @@ mount_filesystem()
     return "${SUCCESS}"
 }
 
-install_packages()
+install_base_packages()
 {
     wprintf "  --> ArchLinux Base"
     pacstrap -c "${ROOT}" base
@@ -280,7 +280,7 @@ install()
     mount_filesystem
 
     wprintf "[+] Installing packages..."
-    install_packages
+    install_base_packages
 
     wprintf "[+] Generating fstab..."
     genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"

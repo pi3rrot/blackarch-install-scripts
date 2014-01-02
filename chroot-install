@@ -151,10 +151,10 @@ install_grub()
 
     # adding blackarch splash
     mv /boot/splash.png /boot/grub/
-    printf 'GRUB_BACKGROUND="/boot/splash.png"\n' >> /etc/default/grub
+    printf 'GRUB_BACKGROUND="/boot/grub/splash.png"\n' >> /etc/default/grub
 
     grub-mkconfig -o /boot/grub/grub.cfg
-    sed 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
+    sed -i 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
         /boot/grub/grub.cfg
     grub-install "${HD}"
 

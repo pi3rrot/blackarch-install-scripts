@@ -127,9 +127,10 @@ update_system()
 install_packages_blackman()
 {
     pacman -S git --noconfirm
+    cd /usr/share/
     git clone https://github.com/nrzizrn/blackman
-    cd blackman
-    ./blackman -a
+    ln -s /usr/share/blackman/blackman /usr/bin
+    blackman -a
 
     return "${SUCCESS}"
 }

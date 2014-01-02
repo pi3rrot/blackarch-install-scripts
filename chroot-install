@@ -181,7 +181,7 @@ install()
         "repository")
             wprintf "[+] Updating system..."
             update_system
-            install_packages_repository
+            install_packages_repo
             ;;
         "blackman")
             install_packages_blackman

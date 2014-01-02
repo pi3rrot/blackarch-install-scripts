@@ -160,12 +160,12 @@ configure_users()
     printf "[+] Setup root password\n"
     passwd
 
-    printf "[+] Do you want to setup a normal user account [y/N]"; read a
+    printf "[+] Do you want to setup a normal user account [y/N]: "; read a
     if [ "${a}" == "y" ] || [ "${a}" == "Y"]; then
         printf "[+] User name: "; read user
         useradd -m -p "" -g users \
             -G "adm,audio,floppy,log,network,rfkill,scanner,storage,optical,power,wheel" \
-            -s /usr/bin/zsh "${user}" && printf "[+] User %s created\n" "${user}"
+            -s /usr/bin/zsh "${user}" && printf "[+] User '%s' created\n" "${user}"
     fi
     printf "%s" "${NC}"
 

@@ -291,6 +291,9 @@ install()
     wprintf "[+] Generating resolv.conf"
     cp /etc/resolv.conf "${ROOT}/etc/"
 
+    wprintf "[+] Setting up grub config..."
+    cp grub/splash.png "${ROOT}/boot/"
+
     wprintf "[+] Installing chroot system..."
 
     case "${menu_opt}" in

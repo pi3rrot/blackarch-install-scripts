@@ -84,7 +84,7 @@ MISC:
     -V: print version and exit
     -H: print help and exit
 EOF
-    return "${SUCCESS}"
+    exit "${SUCCESS}"
 }
 
 check_env()
@@ -143,13 +143,18 @@ install_packages_repo()
 
 install_grub()
 {
-    pacman -S grub --noconfirm
+    pacman -S grub --noconfirm --needed
 
     wprintf "[+] Patching grub2 syntax error"
     printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
 
+    # adding blackarch splass
+    #printf 'GRUB_BACKGROUND="/boot/splash.png"' >> /etc/default/grub
+    mv /boot/splash.png /boot/grub/
+
     grub-install "${HD}"
     grub-mkconfig -o /boot/grub/grub.cfg
+    update-grub
 
     return "${SUCCESS}"
 }

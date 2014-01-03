@@ -183,6 +183,13 @@ configure_users()
     return "${SUCCESS}"
 }
 
+generate_initfs()
+{
+    mkinitcpio -c /etc/mkinitcpio-archiso.conf -g /boot/blackarch-linux.img
+
+    return "${SUCCESS}"
+}
+
 install()
 {
     menu_opt=${1}
@@ -192,6 +199,7 @@ install()
         "live")
             wprintf "[+] Updating system..."
             update_system
+            generate_initfs
             ;;
         "repository")
             wprintf "[+] Updating system..."

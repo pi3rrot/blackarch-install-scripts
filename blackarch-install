@@ -316,8 +316,31 @@ install_chroot()
     return "${SUCCESS}"
 }
 
+# only LIVE mode
 dump_live()
 {
+    t=7 remaining=7;
+    SECONDS=0;
+    while sleep .2; do
+        printf '\r[+] About to dump Live to Hard Drive in '"${RED}$remaining"${NC}' ';
+        if (( (remaining=t-SECONDS) <=0 )); then
+            printf '\rseconds remaining to proceed' 0;
+            break;
+        fi;
+    done
+
+    cp -Rpv /bin /etc /home /lib /lib64 /opt /root /srv /usr /var /tmp /mnt/blackarch
+
+    wprintf "[+] Dump done!"
+
+    return "${SUCCESS}"
+}
+
+# only LIVE mode
+prepare_chroot()
+{
+    mkdir -p "${ROOT}/proc" "${ROOT}/sys" "${ROOT}/dev"
+
     return "${SUCCESS}"
 }
 
@@ -326,13 +349,13 @@ install()
     menu_opt=${1}
 
     wprintf "[+] Updating system..."
-    #update_system
+    update_system
 
     wprintf "[+] Hard drive configuration..."
-    #setup_filesystem
+    setup_filesystem
 
     wprintf "[+] Mounting filesystem..."
-    #mount_filesystem
+    mount_filesystem
 
     # if live not need to do this - just dump everything
     if [ "${menu_opt}" != "${MENU_LIVE}" ]; then
@@ -361,6 +384,7 @@ install()
 
     case "${menu_opt}" in
         "${MENU_LIVE}")
+            prepare_chroot
             install_chroot "-l"
             ;;
         "${MENU_REPO}")

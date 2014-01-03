@@ -40,6 +40,11 @@ root_size="10GB"
 PART_AUTO="1"
 PART_MANUAL="2"
 
+# Menu CONST
+MENU_LIVE="1"
+MENU_REPO="2"
+MENU_BLACKMAN="3"
+
 # blackarchinstall version
 VERSION="v0.3beta"
 
@@ -324,17 +329,23 @@ install()
     wprintf "[+] Mounting filesystem..."
     mount_filesystem
 
-    wprintf "[+] Installing packages..."
-    install_base_packages
+    # if live not need to do this
+    if [ "${menu_opt}" != "${MENU_LIVE}" ]; then
+        wprintf "[+] Installing packages..."
+        install_base_packages
+    fi
 
     wprintf "[+] Generating fstab..."
     genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"
 
-    wprintf "[+] Generating pacman.conf"
-    cp -Rf /etc/pacman* "${ROOT}/etc/"
+    # if live not need to do this
+    if [ "${menu_opt}" != "${MENU_LIVE}" ]; then
+        wprintf "[+] Generating pacman.conf"
+        cp -Rf /etc/pacman* "${ROOT}/etc/"
 
-    wprintf "[+] Generating resolv.conf"
-    cp /etc/resolv.conf "${ROOT}/etc/"
+        wprintf "[+] Generating resolv.conf"
+        cp /etc/resolv.conf "${ROOT}/etc/"
+    fi
 
     wprintf "[+] Setting up grub config..."
     cp grub/splash.png "${ROOT}/boot/"
@@ -342,13 +353,13 @@ install()
     wprintf "[+] Installing chroot system..."
 
     case "${menu_opt}" in
-        "1")
-            err "Not Implemented Yet"
+        "${MENU_LIVE}")
+            install_chroot "-l"
             ;;
-        "2")
+        "${MENU_REPO}")
             install_chroot "-r"
             ;;
-        "3")
+        "${MENU_BLACKMAN}")
             install_chroot "-b"
             ;;
     esac
@@ -388,13 +399,17 @@ get_opts()
 install_menu()
 {
     printf "%s" "${WHITE}"
-    while ! [ "${menu_opt}" == "1" -o "${menu_opt}" == "2" -o "${menu_opt}" == "3" ]; do
+    while ! [ "${menu_opt}" == "${MENU_LIVE}" \
+           -o "${menu_opt}" == "${MENU_REPO}" \
+           -o "${menu_opt}" == "${MENU_BLACKMAN}" ]; do
+
         printf "[+] Select Install Mode:\n"
         printf "    1. Install from LiveCD.\n"
         printf "    2. Install from BlackArch Official Repository.\n"
         printf "    3. Install from Blackman.\n"
         printf "Make a choice: "; read menu_opt
         printf "%s"
+
     done
 
     printf "%s" "${NC}"

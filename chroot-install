@@ -182,12 +182,22 @@ configure_users()
     return "${SUCCESS}"
 }
 
+dump_live()
+{
+    return "${SUCCESS}"
+}
+
 install()
 {
     menu_opt=${1}
 
     wprintf "[+] Installing packages..."
     case "${menu_opt}" in
+        "live")
+            wprintf "[+] Updating system..."
+            update_system
+            dump_live
+            ;;
         "repository")
             wprintf "[+] Updating system..."
             update_system
@@ -213,9 +223,12 @@ install()
 # parse command line options
 get_opts()
 {
-    while getopts rbd:vVH flags
+    while getopts lrbd:vVH flags
     do
         case "${flags}" in
+            l)
+                opt_arg="live"
+                ;;
             r)
                 opt_arg="repository"
                 ;;

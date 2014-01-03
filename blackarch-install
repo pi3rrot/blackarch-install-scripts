@@ -30,10 +30,14 @@ BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 # Defaults Partitioning
 HD="/dev/sda"
 boot_part="${HD}" # next to fix - parsing fdisk
+boot_type="ext2"
 boot_size="100MB"
+root_part="${HD}"
+root_type="ext4"
+root_size="10GB"
 
 # blackarchinstall version
-VERSION="v0.2beta"
+VERSION="v0.3beta"
 
 # true / false
 FALSE="0"
@@ -144,50 +148,53 @@ update_system()
     return "${SUCCESS}"
 }
 
+setup_partition_values()
+{
+    part_opt=${1}
+
+    # * BOOT
+    # Manual
+    if [ "${part_opt}" == "2" ]; then
+        # boot partition
+        printf "[+] Select partition number for /boot partition [%s1]: " "${HD}"
+        read a; [ "${a}" == "" ] && boot_part=${a}
+        printf "[+] Select device type for %s [%s]: " "${boot_part}" "${boot_type}"
+        read a; [ "${a}" == "" ] && boot_type=${a}
+    fi
+
+    # Manual && Automatic
+    printf "[+] Select partition size for /boot [%s]: " "${boot_size}"
+    read a; [ "${a}" == "" ] && boot_size=${a}
+
+    # - ROOT
+    # Manual
+    if [ "${part_opt}" == "2" ]; then
+        # root partition
+        printf "[+] Select partition number for / partition [%s2]: " "${HD}"
+        read a; [ "${a}" == "" ] && root_part=${a}
+        printf "[+] Select device type for %s [%s]: " "${root_part}" "${root_type}"
+        read a; [ "${a}" == "" ] && root_type=${a}
+    fi
+
+    # Manual && Automatic
+    printf "[+] Select partition size for / [%s]: " "${root_size}"
+    read a; [ "${a}" == "" ] && root_size=${a}
+
+    return "${SUCCESS}"
+}
+
 format_filesystem()
 {
-    # TODO: add swap
-
-    printf "%s" "${WHITE}"
-
-
-    # user input settings
-    printf "[+] Type the device for install [/dev/sda]: "; read a
-
-    [ "${a}" == "" ] && HD=${a}
-
-    # boot partition
-    printf "\n[+] Select partition number for /boot partition [%s1]: " "${HD}"; read a;
-    [ "${a}" == "" ] && boot_part=${a}
-
-    printf "\n[+] Select partition size for /boot [100MB]: "; read a
-    [ "${a}" == "" ] && boot_size=${a}
-
-    # root partition
-    printf "\n[+] Select partition number for / partition [%s2]: " "${HD}"; read a
-    if [ "${a}" == "" ]; then
-        root_part="${HD}"
-    else
-        # parse user input errors
-        root_part=${a}
-    fi
-
-    printf "\n[+] Select partition size for / [10GB]: "; read a
-    if [ "${a}" == "" ]; then
-        root_size="10GB"
-    else
-        root_size=${a}
-    fi
-
     # about to format
     printf "%s" "${RED}"
     printf "\n[!!] About to format partitions:\n"
-    printf "\t---> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
-    printf "\t---> /     %s - Size: %s\n" "${root_part}" "${root_size}"
+    printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
+    printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
     printf "Are you sure? [y/N]: "; read a
+    [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "R3ally? ;)"; read a
     printf "%s" "${WHITE}"
 
-    if [ "${a}" == "y" ]; then
+    if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
 
         # check if Partition Table already set
         # parted "/dev/${HD}" print | grep -q "Partition Table"
@@ -200,8 +207,8 @@ format_filesystem()
 
         parted -a optimal "${root_part}" mkpart primary "${boot_size}" "${root_size}"
 
-        mkfs.ext2 -L boot "${boot_part}1"
-        mkfs.ext4 -L root "${root_part}2"
+        "mkfs.${boot_type}" -L boot "${boot_part}1"
+        "mkfs.${boot_type}" -L root "${root_part}2"
 
         printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
         printf "[+] Created root partition: %s - ext4\n" "${root_part}"
@@ -210,6 +217,35 @@ format_filesystem()
         return "${SUCCESS}"
     fi
 
+    reuturn "${SUCCES}"
+}
+
+setup_filesystem()
+{
+    # TODO: add swap
+
+    printf "%s" "${WHITE}"
+
+
+    # user input settings
+    printf "[+] Type the device for install [%s]: " "${HD}"
+    read a; [ "${a}" == "" ] && HD=${a} # sanitize input
+
+    printf "    -> Hard Drive Selected: %s\n" "${HD}"
+
+    while ! [ "${part_opt}" == "1" -o "${part_opt}" == "2" ]; do
+        printf "[+] Partition mode:\n"
+        printf "%s[WARNING] If this is a real env (not a Virtual Machine):\n" "${RED}"
+        printf " * We recomend you to make partitioning by hand before any install and choose option 2.\n"
+        printf " * This comes with no guarantees after option 1. You had been warned. ;)\n%s" "${WHITE}"
+        printf "    1. Automatic - new partition will be created next to your actual ones\n"
+        printf "    2. Manual - you have already partitioned your HD\n"
+        printf "Make your choice: "; read part_opt
+    done
+
+    setup_partition_values "${part_opt}"
+    [ "${part_opt}" == "1" ] && format_filesystem
+
     printf "%s" "${NC}"
 
     return "${SUCCESS}"
@@ -217,13 +253,11 @@ format_filesystem()
 
 mount_filesystem()
 {
-    #TODO: change boot device for user required
-    #TODO: optonal file system
 
     mkdir -p "${ROOT}"
-    mount -t ext4 "${HD}2" "${ROOT}"
+    mount -t "${root_type}" "${HD}2" "${ROOT}"
     mkdir -p "${ROOT}/boot"
-    mount -t ext2 "${HD}1" "${ROOT}/boot"
+    mount -t "${boot_type}" "${HD}1" "${ROOT}/boot"
 
     return "${SUCCESS}"
 }
@@ -262,8 +296,8 @@ install()
     wprintf "[+] Updating system..."
     update_system
 
-    wprintf "[+] Partitioning ${HD}..."
-    format_filesystem
+    wprintf "[+] Hard drive configuration..."
+    setup_filesystem
 
     wprintf "[+] Mounting filesystem..."
     mount_filesystem

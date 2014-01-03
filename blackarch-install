@@ -287,6 +287,8 @@ install_base_packages()
     wprintf "  --> ArchLinux Base"
     pacstrap -c "${ROOT}" base
 
+    [ ${?} != "0" ] && cri "Failed to install ArchLinux base packages"
+
     return "${SUCCESS}"
 }
 

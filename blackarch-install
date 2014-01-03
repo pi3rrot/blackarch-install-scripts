@@ -138,15 +138,15 @@ check_args()
 update_system()
 {
     if [ "$(uname -m)" == "x86_64" ]; then
-        if grep -q "#\[multilib\]" /etc/pacman.conf; then
-            # multilib commented in /etc/pacman.conf
-            wprintf "[+] Uncommenting multilib in /etc/pacman.conf..."
-            sed -i '/[multilib]/{ s/^#//; n; s/^#//; }' /etc/pacman.conf
-        elif ! grep -q "\[multilib\]" /etc/pacman.conf; then
+        #if grep -q "#\[multilib\]" /etc/pacman.conf; then
+        #    # multilib commented in /etc/pacman.conf
+        #    wprintf "[+] Uncommenting multilib in /etc/pacman.conf..."
+        #    sed -i '/\[multilib\]/{ s/^#//; n; s/^#//; }' /etc/pacman.conf
+        #elif ! grep -q "\[multilib\]" /etc/pacman.conf; then
             # multilib not found in /etc/pacman.conf
             wprintf "[+] Enabling multilib in /etc/pacman.conf..."
             printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf
-        fi
+        #fi
     fi
 
     pacman -Syy

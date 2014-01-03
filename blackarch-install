@@ -243,7 +243,7 @@ setup_filesystem()
 
     # user input settings
     printf "[+] Type the device for install [%s]: " "${HD}"
-    read a; [ "${a}" == "" ] && HD=${a} # sanitize input
+    read a; [ "${a}" != "" ] && HD=${a} # sanitize input
 
     printf "    -> Hard Drive Selected: %s\n" "${HD}"
 

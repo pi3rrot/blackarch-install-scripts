@@ -206,7 +206,7 @@ format_filesystem()
     printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
     printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
     printf "Are you sure? [y/N]: "; read a
-    [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "R3ally? ;) \n[y/N]: "; read a
+    [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "   - R3ally? ;) \n[y/N]: "; read a
     printf "%s" "${WHITE}"
 
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
@@ -237,7 +237,7 @@ format_filesystem()
         return "${SUCCESS}"
     fi
 
-    return "${SUCCES}"
+    return "${SUCCESS}"
 }
 
 setup_filesystem()

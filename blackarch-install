@@ -187,7 +187,9 @@ setup_partition_values()
 
 check_parted_status()
 {
-    [ ${?} != "0" ] && cri "Something wrong with parted"
+    [ ${?} != "0" ] && cri "Something wrong with parted \
+        - If you plan to run install script again, \
+        delete first all partitions created before error"
 
     return "${SUCCESS}"
 }

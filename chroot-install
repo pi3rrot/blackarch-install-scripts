@@ -156,6 +156,7 @@ install_grub()
     grub-mkconfig -o /boot/grub/grub.cfg
     sed -i 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
         /boot/grub/grub.cfg
+    printf "HD: %s\n" "${HD}"
     grub-install "${HD}"
 
     #update-grub
@@ -182,11 +183,6 @@ configure_users()
     return "${SUCCESS}"
 }
 
-dump_live()
-{
-    return "${SUCCESS}"
-}
-
 install()
 {
     menu_opt=${1}
@@ -196,7 +192,6 @@ install()
         "live")
             wprintf "[+] Updating system..."
             update_system
-            dump_live
             ;;
         "repository")
             wprintf "[+] Updating system..."

@@ -18,7 +18,7 @@
 ################################################################################
 
 # SECURITY VAR - this version can rm -rf /* your hard drive
-SEC_ENABLE="true"
+SEC_ENABLE="false"
 
 
 # root variable
@@ -300,19 +300,24 @@ install_base_packages()
 install_chroot()
 {
     mode=${1}
-	chroot_file="chroot-install"
+    chroot_file="chroot-install"
 
-    cp "${chroot_file}" "${ROOT}/bin"
+    cp "${chroot_file}" "${ROOT}/bin/"
 
     mount -t proc proc "${ROOT}/proc"
     mount --rbind /dev "${ROOT}/dev"
     mount --rbind /sys "${ROOT}/sys"
 
-    chroot "${ROOT}" "${chroot_file}" "${mode}" -d "${HD}"
+    chroot "${ROOT}" "/bin/${chroot_file}" "${mode}" -d "${HD}"
 
     # cleaning up
     rm -rf "${ROOT}/bin/${chroot_file}"
 
+    return "${SUCCESS}"
+}
+
+dump_live()
+{
     return "${SUCCESS}"
 }
 
@@ -321,18 +326,20 @@ install()
     menu_opt=${1}
 
     wprintf "[+] Updating system..."
-    update_system
+    #update_system
 
     wprintf "[+] Hard drive configuration..."
-    setup_filesystem
+    #setup_filesystem
 
     wprintf "[+] Mounting filesystem..."
-    mount_filesystem
+    #mount_filesystem
 
-    # if live not need to do this
+    # if live not need to do this - just dump everything
     if [ "${menu_opt}" != "${MENU_LIVE}" ]; then
         wprintf "[+] Installing packages..."
         install_base_packages
+    else
+        dump_live
     fi
 
     wprintf "[+] Generating fstab..."

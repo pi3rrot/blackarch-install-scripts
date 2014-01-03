@@ -36,6 +36,10 @@ root_part="${HD}"
 root_type="ext4"
 root_size="10GB"
 
+# Partition CONST
+PART_AUTO="1"
+PART_MANUAL="2"
+
 # blackarchinstall version
 VERSION="v0.3beta"
 
@@ -96,8 +100,6 @@ usage()
 {
 cat <<EOF
 Usage: $0 <arg> | <misc>
-OPTIONS:
-    -i: install
 MISC:
     -V: print version and exit
     -H: print help and exit
@@ -154,31 +156,38 @@ setup_partition_values()
 
     # * BOOT
     # Manual
-    if [ "${part_opt}" == "2" ]; then
+    if [ "${part_opt}" == "${PART_MANUAL}" ]; then
         # boot partition
         printf "[+] Select partition number for /boot partition [%s1]: " "${HD}"
-        read a; [ "${a}" == "" ] && boot_part=${a}
+        read a; [ "${a}" != "" ] && boot_part=${a}
         printf "[+] Select device type for %s [%s]: " "${boot_part}" "${boot_type}"
-        read a; [ "${a}" == "" ] && boot_type=${a}
+        read a; [ "${a}" != "" ] && boot_type=${a}
     fi
 
     # Manual && Automatic
     printf "[+] Select partition size for /boot [%s]: " "${boot_size}"
-    read a; [ "${a}" == "" ] && boot_size=${a}
+    read a; [ "${a}" != "" ] && boot_size=${a}
 
-    # - ROOT
+    # * ROOT
     # Manual
-    if [ "${part_opt}" == "2" ]; then
+    if [ "${part_opt}" == "${PART_MANUAL}" ]; then
         # root partition
         printf "[+] Select partition number for / partition [%s2]: " "${HD}"
-        read a; [ "${a}" == "" ] && root_part=${a}
+        read a; [ "${a}" != "" ] && root_part=${a}
         printf "[+] Select device type for %s [%s]: " "${root_part}" "${root_type}"
-        read a; [ "${a}" == "" ] && root_type=${a}
+        read a; [ "${a}" != "" ] && root_type=${a}
     fi
 
     # Manual && Automatic
     printf "[+] Select partition size for / [%s]: " "${root_size}"
-    read a; [ "${a}" == "" ] && root_size=${a}
+    read a; [ "${a}" != "" ] && root_size=${a}
+
+    return "${SUCCESS}"
+}
+
+check_parted_status()
+{
+    [ ${?} != "0" ] && cri "Something wrong with parted"
 
     return "${SUCCESS}"
 }
@@ -191,7 +200,7 @@ format_filesystem()
     printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
     printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
     printf "Are you sure? [y/N]: "; read a
-    [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "R3ally? ;)"; read a
+    [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "R3ally? ;) \n[y/N]: "; read a
     printf "%s" "${WHITE}"
 
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
@@ -199,13 +208,17 @@ format_filesystem()
         # check if Partition Table already set
         # parted "/dev/${HD}" print | grep -q "Partition Table"
         parted -s "${HD}" mklabel msdos
+        check_parted_status
 
         parted -a optimal "${boot_part}" mkpart primary 0% "${boot_size}"
+        check_parted_status
 
         # partition bootable
         parted "${boot_part}" set 1 boot on
+        check_parted_status
 
         parted -a optimal "${root_part}" mkpart primary "${boot_size}" "${root_size}"
+        check_parted_status
 
         "mkfs.${boot_type}" -L boot "${boot_part}1"
         "mkfs.${boot_type}" -L root "${root_part}2"
@@ -213,11 +226,12 @@ format_filesystem()
         printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
         printf "[+] Created root partition: %s - ext4\n" "${root_part}"
     else
-        format_filesystem
+        # go back to setup up filesystem
+        setup_filesystem
         return "${SUCCESS}"
     fi
 
-    reuturn "${SUCCES}"
+    return "${SUCCES}"
 }
 
 setup_filesystem()
@@ -233,7 +247,7 @@ setup_filesystem()
 
     printf "    -> Hard Drive Selected: %s\n" "${HD}"
 
-    while ! [ "${part_opt}" == "1" -o "${part_opt}" == "2" ]; do
+    while ! [ "${part_opt}" == "${PART_AUTO}" -o "${part_opt}" == "${PART_MANUAL}" ]; do
         printf "[+] Partition mode:\n"
         printf "%s[WARNING] If this is a real env (not a Virtual Machine):\n" "${RED}"
         printf " * We recomend you to make partitioning by hand before any install and choose option 2.\n"
@@ -244,7 +258,7 @@ setup_filesystem()
     done
 
     setup_partition_values "${part_opt}"
-    [ "${part_opt}" == "1" ] && format_filesystem
+    [ "${part_opt}" == "${PART_AUTO}" ] && format_filesystem
 
     printf "%s" "${NC}"
 
@@ -337,13 +351,13 @@ install()
 # parse command line options
 get_opts()
 {
-    while getopts ivVH flags
+    while getopts vVH flags
     do
         case "${flags}" in
-            i)
-                #optarg=${OPTARG}
-                opt="install"
-                ;;
+            #i)
+            #    #optarg=${OPTARG}
+            #    opt="install"
+            #    ;;
             v)
                 VERBOSE="/dev/stdout"
                 ;;

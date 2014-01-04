@@ -261,7 +261,7 @@ manual_partition()
     read a; [ "${a}" != "" ] && boot_part="${HD}${a}"
     printf "    -> Type of Boot partition created [ext2]: "
     read a; [ "${a}" != "" ] && boot_type="${a}"
-    printf "    -> Number of the Root partition created [2]:"
+    printf "    -> Number of the Root partition created [2]: "
     read a; [ "${a}" != "" ] && root_part="${HD}${a}"
     printf "    -> Type of Root partition created [ext4]: "
     read a; [ "${a}" != "" ] && boot_type="${a}"
@@ -269,8 +269,8 @@ manual_partition()
     # about to format
     printf "%s" "${RED}"
     printf "\n[!!] About to create and format partitions:\n"
-    printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
-    printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
+    printf "    -> /boot %s with type %s\n" "${boot_part}" "${boot_type}"
+    printf "    -> /     %s with type %s\n" "${root_part}" "${root_type}"
     printf "Are you sure? [y/N]: "; read a
     [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "   - R3ally? ;) \n[y/N]: "; read a
     printf "%s" "${WHITE}"
@@ -305,7 +305,7 @@ setup_filesystem()
         printf "%s[WARNING] If this is a real env (not a Virtual Machine):\n" "${RED}"
         printf " * We recomend you to make partitioning by hand with option 2.\n"
         printf " * This comes with no guarantees after option 1. You had been warned. ;)\n%s" "${WHITE}"
-        printf "    1. Automatic - only empty HD! new partitions will be created in %s1/%s2\n" "${HD}" "${HD}"
+        printf "    1. Automatic - only empty HD! new partitions will be created in %s1 and %s2\n" "${HD}" "${HD}"
         printf "    2. Manual - set manual partitions with cfdisk and format them\n"
         printf "Make your choice: "; read part_opt
     done

@@ -154,7 +154,7 @@ update_system()
         #fi
     fi
 
-    pacman -Syy "${LIVE+-u}"
+    pacman -Syy "${MENU_LIVE+-u}"
 
     return "${SUCCESS}"
 }

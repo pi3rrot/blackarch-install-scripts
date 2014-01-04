@@ -184,6 +184,14 @@ check_parted_status()
     return "${SUCCESS}"
 }
 
+check_mkfs_status()
+{
+    [ ${?} != "0" ] && cri "Something wrong with mkfs"
+
+    return "${SUCCESS}"
+}
+
+
 # auto mode
 format_filesystem()
 {
@@ -215,8 +223,8 @@ format_filesystem()
 
         boot_part="${boot_part}1"
         root_part="${root_part}2"
-        "mkfs.${boot_type}" -L boot "${boot_part}"
-        "mkfs.${root_type}" -L root "${root_part}"
+        "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
+        "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
 
         printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
         printf "[+] Created root partition: %s - ext4\n" "${root_part}"
@@ -257,8 +265,8 @@ manual_partition()
     printf "%s" "${WHITE}"
 
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
-        "mkfs.${boot_type}" -L boot "${boot_part}"
-        "mkfs.${root_type}" -L root "${root_part}"
+        "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
+        "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
     else
         # go back to setup up filesystem
         setup_filesystem

@@ -154,7 +154,7 @@ update_system()
         #fi
     fi
 
-    pacman -Syy "${MENU_LIVE+-u}"
+    pacman -Syy "${LIVE+-u}"
 
     return "${SUCCESS}"
 }
@@ -431,19 +431,42 @@ install()
 
     case "${menu_opt}" in
         "${MENU_LIVE}")
+            LIVE="true"
             prepare_chroot
             install_chroot "-l"
             ;;
         "${MENU_REPO}")
+            REPO="true"
             install_chroot "-r"
             ;;
         "${MENU_BLACKMAN}")
+            BLACKMAN="true"
             install_chroot "-b"
             ;;
     esac
 
     return "${SUCCESS}"
 }
+
+install_menu()
+{
+    printf "%s" "${WHITE}"
+    while ! [ "${menu_opt}" == "${MENU_LIVE}" \
+           -o "${menu_opt}" == "${MENU_REPO}" \
+           -o "${menu_opt}" == "${MENU_BLACKMAN}" ]; do
+
+        printf "[+] Select Install Mode:\n"
+        printf "    1. Install from LiveCD.\n"
+        printf "    2. Install from BlackArch Official Repository.\n"
+        printf "    3. Install from Blackman.\n"
+        printf "Make a choice: "; read menu_opt
+    done
+
+    printf "%s" "${NC}"
+
+    return "${SUCCESS}"
+}
+
 
 # parse command line options
 get_opts()
@@ -470,27 +493,6 @@ get_opts()
                 ;;
         esac
     done
-
-    return "${SUCCESS}"
-}
-
-install_menu()
-{
-    printf "%s" "${WHITE}"
-    while ! [ "${menu_opt}" == "${MENU_LIVE}" \
-           -o "${menu_opt}" == "${MENU_REPO}" \
-           -o "${menu_opt}" == "${MENU_BLACKMAN}" ]; do
-
-        printf "[+] Select Install Mode:\n"
-        printf "    1. Install from LiveCD.\n"
-        printf "    2. Install from BlackArch Official Repository.\n"
-        printf "    3. Install from Blackman.\n"
-        printf "Make a choice: "; read menu_opt
-        printf "%s"
-
-    done
-
-    printf "%s" "${NC}"
 
     return "${SUCCESS}"
 }

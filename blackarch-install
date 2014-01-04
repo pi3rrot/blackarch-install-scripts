@@ -29,7 +29,7 @@ BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 
 # Defaults Partitioning
 HD="/dev/sda"
-boot_part="${HD}" # next to fix - parsing fdisk
+boot_part="${HD}"
 boot_type="ext2"
 boot_size="100MB"
 root_part="${HD}"
@@ -46,7 +46,7 @@ MENU_REPO="2"
 MENU_BLACKMAN="3"
 
 # blackarchinstall version
-VERSION="v0.4beta"
+VERSION="v0.5dev"
 
 # true / false
 FALSE="0"
@@ -159,6 +159,7 @@ update_system()
     return "${SUCCESS}"
 }
 
+# auto mode
 setup_partition_values()
 {
     part_opt=${1}
@@ -194,20 +195,20 @@ setup_partition_values()
     return "${SUCCESS}"
 }
 
+# auto mode
 check_parted_status()
 {
-    [ ${?} != "0" ] && cri "Something wrong with parted \
-        - If you plan to run install script again, \
-        delete first all partitions created before error"
+    [ ${?} != "0" ] && cri "Something wrong with parted - If you plan to run install script again, delete first all partitions created before error"
 
     return "${SUCCESS}"
 }
 
+# auto mode
 format_filesystem()
 {
     # about to format
     printf "%s" "${RED}"
-    printf "\n[!!] About to format partitions:\n"
+    printf "\n[!!] About to create and format partitions:\n"
     printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
     printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
     printf "Are you sure? [y/N]: "; read a
@@ -231,11 +232,52 @@ format_filesystem()
         parted -a optimal "${root_part}" mkpart primary "${boot_size}" "${root_size}"
         check_parted_status
 
-        "mkfs.${boot_type}" -L boot "${boot_part}1"
-        "mkfs.${boot_type}" -L root "${root_part}2"
+        boot_part="${boot_part}1"
+        root_part="${root_part}2"
+        "mkfs.${boot_type}" -L boot "${boot_part}"
+        "mkfs.${root_type}" -L root "${root_part}"
 
         printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
         printf "[+] Created root partition: %s - ext4\n" "${root_part}"
+    else
+        # go back to setup up filesystem
+        setup_filesystem
+        return "${SUCCESS}"
+    fi
+
+    return "${SUCCESS}"
+}
+
+manual_partition()
+{
+    # manual defaults
+    boot_part="${HD}1"
+    root_part="${HD}2"
+
+    printf "[+] Create new partitions with cfdisk [only boot and root]\n"
+    sleep 2
+    cfdisk
+    printf "    -> Number of the Boot partition created [1]: "
+    read a; [ "${a}" != "" ] && boot_part="${HD}${a}"
+    printf "    -> Type of Boot partition created [ext2]: "
+    read a; [ "${a}" != "" ] && boot_type="${a}"
+    printf "    -> Number of the Root partition created [2]:"
+    read a; [ "${a}" != "" ] && root_part="${HD}${a}"
+    printf "    -> Type of Root partition created [ext4]: "
+    read a; [ "${a}" != "" ] && boot_type="${a}"
+
+    # about to format
+    printf "%s" "${RED}"
+    printf "\n[!!] About to create and format partitions:\n"
+    printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
+    printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
+    printf "Are you sure? [y/N]: "; read a
+    [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "   - R3ally? ;) \n[y/N]: "; read a
+    printf "%s" "${WHITE}"
+
+    if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
+        "mkfs.${boot_type}" -L boot "${boot_part}"
+        "mkfs.${root_type}" -L root "${root_part}"
     else
         # go back to setup up filesystem
         setup_filesystem
@@ -261,18 +303,19 @@ setup_filesystem()
     while ! [ "${part_opt}" == "${PART_AUTO}" -o "${part_opt}" == "${PART_MANUAL}" ]; do
         printf "[+] Partition mode:\n"
         printf "%s[WARNING] If this is a real env (not a Virtual Machine):\n" "${RED}"
-        printf " * We recomend you to make partitioning by hand before any install and choose option 2.\n"
+        printf " * We recomend you to make partitioning by hand with option 2.\n"
         printf " * This comes with no guarantees after option 1. You had been warned. ;)\n%s" "${WHITE}"
-        printf "    1. Automatic - new partition will be created next to your actual ones\n"
-        printf "    2. Manual - you have already partitioned your HD\n"
+        printf "    1. Automatic - only empty HD! new partitions will be created in %s1/%s2\n" "${HD}" "${HD}"
+        printf "    2. Manual - set manual partitions with cfdisk and format them\n"
         printf "Make your choice: "; read part_opt
-        [ "${part_opt}" == "${PART_MANUAL}" ] &&
-            printf "\n\n[!!] Manual Mode will come in the next version v0.5\n\n" &&
-            part_opt=''
     done
 
-    setup_partition_values "${part_opt}"
-    [ "${part_opt}" == "${PART_AUTO}" ] && format_filesystem
+    if [ "${part_opt}" == "${PART_AUTO}" ]; then
+        setup_partition_values "${part_opt}"
+        format_filesystem
+    else
+        manual_partition
+    fi
 
     printf "%s" "${NC}"
 
@@ -283,9 +326,9 @@ mount_filesystem()
 {
 
     mkdir -p "${ROOT}"
-    mount -t "${root_type}" "${HD}2" "${ROOT}"
+    mount -t "${root_type}" "${root_part}" "${ROOT}"
     mkdir -p "${ROOT}/boot"
-    mount -t "${boot_type}" "${HD}1" "${ROOT}/boot"
+    mount -t "${boot_type}" "${boot_part}" "${ROOT}/boot"
 
     return "${SUCCESS}"
 }

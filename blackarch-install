@@ -165,29 +165,10 @@ setup_partition_values()
     part_opt=${1}
 
     # * BOOT
-    # Manual
-    if [ "${part_opt}" == "${PART_MANUAL}" ]; then
-        # boot partition
-        printf "[+] Select partition number for /boot partition [%s1]: " "${HD}"
-        read a; [ "${a}" != "" ] && boot_part=${a}
-        printf "[+] Select device type for %s [%s]: " "${boot_part}" "${boot_type}"
-        read a; [ "${a}" != "" ] && boot_type=${a}
-    fi
-
-    # Manual && Automatic
     printf "[+] Select partition size for /boot [%s]: " "${boot_size}"
     read a; [ "${a}" != "" ] && boot_size=${a}
 
     # * ROOT
-    # Manual
-    if [ "${part_opt}" == "${PART_MANUAL}" ]; then
-        # root partition
-        printf "[+] Select partition number for / partition [%s2]: " "${HD}"
-        read a; [ "${a}" != "" ] && root_part=${a}
-        printf "[+] Select device type for %s [%s]: " "${root_part}" "${root_type}"
-        read a; [ "${a}" != "" ] && root_type=${a}
-    fi
-
     # Manual && Automatic
     printf "[+] Select partition size for / [%s]: " "${root_size}"
     read a; [ "${a}" != "" ] && root_size=${a}

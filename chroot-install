@@ -156,7 +156,7 @@ install_grub()
     grub-mkconfig -o /boot/grub/grub.cfg
     sed -i 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
         /boot/grub/grub.cfg
-    printf "HD: %s\n" "${HD}"
+
     grub-install "${HD}"
 
     #update-grub

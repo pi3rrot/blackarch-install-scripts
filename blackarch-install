@@ -154,7 +154,7 @@ update_system()
         #fi
     fi
 
-    pacman -Syy
+    pacman -Syy "${LIVE+-u}"
 
     return "${SUCCESS}"
 }
@@ -322,14 +322,17 @@ dump_live()
     t=7 remaining=7;
     SECONDS=0;
     while sleep .2; do
-        printf '\r[+] About to dump Live to Hard Drive in '"${RED}$remaining"${NC}' ';
+        printf '\r[+] Dumping Live into Hard Drive in '"${RED}$remaining"${NC}' ';
         if (( (remaining=t-SECONDS) <=0 )); then
             printf '\rseconds remaining to proceed' 0;
             break;
         fi;
     done
 
-    cp -Rpv /bin /etc /home /lib /lib64 /opt /root /srv /usr /var /tmp /mnt/blackarch
+    cp -Rpv /bin /etc /home /lib /lib64 /opt /root /srv /usr /var /tmp "${ROOT}"
+
+    # cleaning files - it will be create later
+    rm -rf "${ROOT}/etc/{group, passwd, shadow*, gshadow*}"
 
     wprintf "[+] Dump done!"
 
@@ -357,13 +360,11 @@ install()
     wprintf "[+] Mounting filesystem..."
     mount_filesystem
 
-    # if live not need to do this - just dump everything
-    if [ "${menu_opt}" != "${MENU_LIVE}" ]; then
-        wprintf "[+] Installing packages..."
-        install_base_packages
-    else
-        dump_live
-    fi
+    # if live dump everything
+    [ "${menu_opt}" == "${MENU_LIVE}" ] && dump_live
+
+    wprintf "[+] Installing packages..."
+    install_base_packages
 
     wprintf "[+] Generating fstab..."
     genfstab -p "${ROOT}" >> "${ROOT}/etc/fstab"

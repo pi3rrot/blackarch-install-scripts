@@ -185,7 +185,9 @@ configure_users()
 
 generate_initfs()
 {
-    mkinitcpio -c /etc/mkinitcpio-archiso.conf -g /boot/blackarch-linux.img
+    mkinitcpio -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
+    mkinitcpio -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux-falback.img -S autodetect
+    #mkinitcpio -c /etc/mkinitcpio-archiso.conf -g /boot/blackarch-linux.img
 
     return "${SUCCESS}"
 }
@@ -199,7 +201,7 @@ install()
         "live")
             wprintf "[+] Updating system..."
             update_system
-            generate_initfs
+            #generate_initfs
             ;;
         "repository")
             wprintf "[+] Updating system..."

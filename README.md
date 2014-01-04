@@ -1,6 +1,14 @@
 Blackarch Install
 -----------------
 
+Install From  ArchLinux - v0.4 Release (See Github Tags)
+--------------------------------------------------------
+    - v0.4 comes with several install options:
+        1. Install from LiveCD - Dump everything to your partition.
+        2. Install from Repository - Install packages you choose From BlackArch Official Repository.
+        3. Install from Blackman - Download And Compile Packages from their PKGBUILD.
+
+
 Install From ArchLinux - v0.1 Release (See Github Tags)
 -------------------------------------------------------
    1. Download ISO - https://www.archlinux.org/download/
@@ -11,10 +19,3 @@ Install From ArchLinux - v0.1 Release (See Github Tags)
    5. git clone https://github.com/BlackArch/blackarch-install-scripts
    6. cd blackarch-install-scripts; sed 's/SEC_ENABLE="true"/SEC_ENABLE="false"/' blackarch-install; sh blackarch-install
    7. Enjoy BlackArch!
-
-Next Release
-------------
-    - Next release will come with several options:
-        1. Install from LiveCD - Dump everything to your partition.
-        2. Install from Repository - Install packages you choose From BlackArch Official Repository.
-        3. Install from Blackman - Download And Compile Packages from their PKGBUILD.

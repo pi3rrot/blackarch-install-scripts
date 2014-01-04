@@ -266,6 +266,9 @@ setup_filesystem()
         printf "    1. Automatic - new partition will be created next to your actual ones\n"
         printf "    2. Manual - you have already partitioned your HD\n"
         printf "Make your choice: "; read part_opt
+        [ "${part_opt}" == "${PART_MANUAL}" ] &&
+            printf "\n\n[!!] Manual Mode will come in the next version v0.5\n\n" &&
+            part_opt=''
     done
 
     setup_partition_values "${part_opt}"
@@ -322,7 +325,7 @@ dump_live()
     t=7 remaining=7;
     SECONDS=0;
     while sleep .2; do
-        printf '\r[+] Dumping Live into Hard Drive in '"${RED}$remaining"${NC}' ';
+        printf '\r[+] Down the rabbit hole we go '"${RED}$remaining"${NC}' ';
         if (( (remaining=t-SECONDS) <=0 )); then
             printf '\rseconds remaining to proceed' 0;
             break;

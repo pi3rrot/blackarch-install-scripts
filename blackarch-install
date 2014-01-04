@@ -264,9 +264,6 @@ manual_partition()
     printf "%s" "${WHITE}"
 
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
-        # partition bootable
-        parted "${boot_part}" set 1 boot on
-        check_parted_status
         "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
         "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
     else

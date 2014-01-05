@@ -46,7 +46,7 @@ MENU_REPO="2"
 MENU_BLACKMAN="3"
 
 # blackarchinstall version
-VERSION="v0.5dev"
+VERSION="v0.5.1beta"
 
 # true / false
 FALSE="0"
@@ -236,6 +236,7 @@ format_filesystem()
     return "${SUCCESS}"
 }
 
+# manual mode
 manual_partition()
 {
     # manual defaults
@@ -334,7 +335,14 @@ install_base_packages()
 install_chroot()
 {
     mode=${1}
-    chroot_file="chroot-install"
+
+    # setup chroot-install path
+    if [ -f chroot-install ]; then
+        chroot_file="chroot-install"
+    else
+        # we are a blackarch package installed
+        chroot_file="/usr/share/blackarch-install-scripts/chroot-install"
+    fi
 
     cp "${chroot_file}" "${ROOT}/bin/"
 
@@ -413,10 +421,14 @@ install()
     fi
 
     wprintf "[+] Setting up grub config..."
-    cp grub/splash.png "${ROOT}/boot/"
+    if [ -f grub/splash.png ]; then
+        cp grub/splash.png "${ROOT}/boot/"
+    else
+        # we are a blackarch package installed
+        cp /usr/share/blackarch-install-scripts/grub/splash.png "${ROOT}/boot/"
+    fi
 
     wprintf "[+] Installing chroot system..."
-
     case "${menu_opt}" in
         "${MENU_LIVE}")
             LIVE="true"

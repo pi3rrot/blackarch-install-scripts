@@ -1,0 +1,19 @@
+v0.1 - First release
+	-> install from Official BlackArch Repositories
+v0.2
+	-> splash screen for grub
+	-> Install
+		2. Install from Repository - Install packages you choose From
+			BlackArch Official Repository.
+		3. Install from Blackman - Download And Compile
+			Packages from their PKGBUILD.
+v0.3
+	-> Partition
+		-> added Automatic and Manual Mode Menu
+			-> Manual not implemented (v0.5)
+v0.4
+	-> install
+		1. Install from LiveCD - Dump everything to your partition.
+v0.5
+	-> Partition mode
+		-> Manual mode implemented

@@ -6,10 +6,10 @@ Netinstall
     [X] Install mode 2. Repo
     [ ] Install mode 3. Blackman
     [X] Install Manual Partition
-    [ ] Install Automatic Partition
+    [X] Install Automatic Partition
 Live
-    [ ] Install mode 1. LiveCD
+    [X] Install mode 1. LiveCD
     [ ] Install mode 2. Repo
     [ ] Install mode 3. Blackman
-    [ ] Install Manual Partition
-    [ ] Install Automatic Parititon
+    [X] Install Manual Partition
+    [X] Install Automatic Parititon

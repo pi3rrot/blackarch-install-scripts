@@ -183,6 +183,7 @@ configure_users()
     return "${SUCCESS}"
 }
 
+# not used atm
 generate_initfs()
 {
     mkinitcpio -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
@@ -201,7 +202,6 @@ install()
         "live")
             wprintf "[+] Updating system..."
             update_system
-            #generate_initfs
             ;;
         "repository")
             wprintf "[+] Updating system..."

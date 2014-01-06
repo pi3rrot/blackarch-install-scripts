@@ -345,6 +345,7 @@ install_chroot()
     fi
 
     cp "${chroot_file}" "${ROOT}/bin/"
+    mkdir -p "${ROOT}/{proc, sys, dev}"
 
     mount -t proc proc "${ROOT}/proc"
     mount --rbind /dev "${ROOT}/dev"
@@ -377,14 +378,6 @@ dump_live()
     rm -rf "${ROOT}/etc/{group, passwd, shadow*, gshadow*}"
 
     wprintf "[+] Dump done!"
-
-    return "${SUCCESS}"
-}
-
-# only LIVE mode
-prepare_chroot()
-{
-    mkdir -p "${ROOT}/proc" "${ROOT}/sys" "${ROOT}/dev"
 
     return "${SUCCESS}"
 }
@@ -434,7 +427,6 @@ install()
     wprintf "[+] Installing chroot system..."
     case "${menu_opt}" in
         "${MENU_LIVE}")
-            prepare_chroot
             install_chroot "-l"
             ;;
         "${MENU_REPO}")

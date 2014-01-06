@@ -393,6 +393,9 @@ install()
 {
     menu_opt=${1}
 
+    # live flag for update system
+    [ "${menu_opt}" == "${MENU_LIVE}" ] && LIVE="true"
+
     wprintf "[+] Updating system..."
     update_system
 
@@ -431,16 +434,13 @@ install()
     wprintf "[+] Installing chroot system..."
     case "${menu_opt}" in
         "${MENU_LIVE}")
-            LIVE="true"
             prepare_chroot
             install_chroot "-l"
             ;;
         "${MENU_REPO}")
-            REPO="true"
             install_chroot "-r"
             ;;
         "${MENU_BLACKMAN}")
-            BLACKMAN="true"
             install_chroot "-b"
             ;;
     esac

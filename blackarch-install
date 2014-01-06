@@ -345,7 +345,7 @@ install_chroot()
     fi
 
     cp "${chroot_file}" "${ROOT}/bin/"
-    mkdir -p "${ROOT}/{proc, sys, dev}"
+    mkdir -p "${ROOT}/{proc,sys,dev}"
 
     mount -t proc proc "${ROOT}/proc"
     mount --rbind /dev "${ROOT}/dev"

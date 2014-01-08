@@ -164,6 +164,13 @@ install_grub()
     return "${SUCCESS}"
 }
 
+install_system_tools()
+{
+    pacman -S zsh --noconfirm
+
+    return "${SUCCESS}"
+}
+
 configure_users()
 {
     printf "%s" "${WHITE}"
@@ -212,6 +219,9 @@ install()
             install_packages_blackman
             ;;
     esac
+
+    wprintf "[+] Installing system tools..."
+    install_system_tools
 
     wprintf "[+] Configure system users..."
     configure_users

@@ -170,6 +170,8 @@ configure_users()
     printf "[+] Setup root password\n"
     passwd
 
+    mv /mnt/shell/root/.bashrc /root/
+
     printf "[+] Do you want to setup a normal user account [y/N]: "; read a
     if [ "${a}" == "y" ] || [ "${a}" == "Y"]; then
         printf "[+] User name: "; read user
@@ -177,7 +179,12 @@ configure_users()
             -G "adm,audio,floppy,log,network,rfkill,scanner,storage,optical,power,wheel" \
             -s /bin/bash "${user}" && printf "[+] User '%s' created\n" "${user}"
         passwd "${user}"
+        mv /mnt/shell/user/.bashrc "/home/${user}/"
     fi
+
+    # cleaning up
+    rm -rf /tmp/shell
+
     printf "%s" "${NC}"
 
     return "${SUCCESS}"

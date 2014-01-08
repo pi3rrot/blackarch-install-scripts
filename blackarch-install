@@ -417,7 +417,7 @@ install()
     fi
 
     wprintf "[+] Setting up grub config..."
-    if [ -f grub/splash.png ]; then
+    if [ -d grub ]; then
         cp grub/splash.png "${ROOT}/boot/"
     else
         # we are a blackarch package installed
@@ -425,6 +425,12 @@ install()
     fi
 
     wprintf "[+] Installing chroot system..."
+    # copy .bashrc for users
+    if [ -d shell ]; then
+        cp -R shell/ "${ROOT}/mnt/"
+    else
+        cp -R /usr/share/blackarch-install-scripts/shell "${ROOT}/mnt/"
+    fi
     case "${menu_opt}" in
         "${MENU_LIVE}")
             install_chroot "-l"

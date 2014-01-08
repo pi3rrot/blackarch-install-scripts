@@ -164,13 +164,6 @@ install_grub()
     return "${SUCCESS}"
 }
 
-install_system_tools()
-{
-    pacman -S zsh --noconfirm
-
-    return "${SUCCESS}"
-}
-
 configure_users()
 {
     printf "%s" "${WHITE}"
@@ -182,7 +175,7 @@ configure_users()
         printf "[+] User name: "; read user
         useradd -m -p "" -g users \
             -G "adm,audio,floppy,log,network,rfkill,scanner,storage,optical,power,wheel" \
-            -s /usr/bin/zsh "${user}" && printf "[+] User '%s' created\n" "${user}"
+            -s /bin/bash "${user}" && printf "[+] User '%s' created\n" "${user}"
         passwd "${user}"
     fi
     printf "%s" "${NC}"
@@ -219,9 +212,6 @@ install()
             install_packages_blackman
             ;;
     esac
-
-    wprintf "[+] Installing system tools..."
-    install_system_tools
 
     wprintf "[+] Configure system users..."
     configure_users

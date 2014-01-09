@@ -21,6 +21,8 @@ Version: 0.5.x (See Github Tags)
         3.1. Set the device you want to install BlackArch Linux in.
             -> i.e. /dev/sda (default one)
         3.2. Choose Partition Mode:
+            * At the moment, only /boot and / root partition are supported.
+            * We will add optional /home and Swap in future releases.
             1. Automatic - only empty HD! new partitions will be created in
                /dev/sda1 and /dev/sda2.
                 - This mode its thinking for Virtual Machines environment,

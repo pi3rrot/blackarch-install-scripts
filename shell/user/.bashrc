@@ -2,6 +2,9 @@
 # ~/.bashrc
 #
 
+# ls with colors
+alias ls='ls --color=auto'
+
 # Colors
 DarkGrey="$(tput bold ; tput setaf 0)"
 White="$(tput bold ; tput setaf 7)"

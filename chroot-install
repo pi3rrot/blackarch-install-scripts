@@ -171,6 +171,7 @@ configure_users()
     passwd
 
     mv /mnt/shell/root/.bashrc /root/
+    cp /root/.bashrc /root/.bash_profile
 
     printf "[+] Do you want to setup a normal user account [y/N]: "; read a
     if [ "${a}" == "y" ] || [ "${a}" == "Y"]; then
@@ -180,6 +181,7 @@ configure_users()
             -s /bin/bash "${user}" && printf "[+] User '%s' created\n" "${user}"
         passwd "${user}"
         mv /mnt/shell/user/.bashrc "/home/${user}/"
+        cp "/home/${user}/.bashrc" "/home/${user}/.bash_profile"
     fi
 
     # cleaning up

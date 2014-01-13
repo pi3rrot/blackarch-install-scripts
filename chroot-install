@@ -164,11 +164,30 @@ install_grub()
     return "${SUCCESS}"
 }
 
+# set passwd check
+set_passwd()
+{
+    user=${1}
+
+    if [ -n "${user}" ]; then
+        passwd "${user}"
+    else
+        passwd
+    fi
+
+    if [ "${?}" != "0" ]; then
+        printf "[-] Wrong passwd - try again d00d\n"
+        set_passwd "${user}"
+    else
+        return "${SUCCESS}"
+    fi
+}
+
 configure_users()
 {
     printf "%s" "${WHITE}"
     printf "[+] Setup root password\n"
-    passwd
+    set_passwd
 
     mv /mnt/shell/root/.bashrc /root/
     cp /root/.bashrc /root/.bash_profile
@@ -179,7 +198,7 @@ configure_users()
         useradd -m -p "" -g users \
             -G "adm,audio,floppy,log,network,rfkill,scanner,storage,optical,power,wheel" \
             -s /bin/bash "${user}" && printf "[+] User '%s' created\n" "${user}"
-        passwd "${user}"
+        set_passwd "${user}"
         mv /mnt/shell/user/.bashrc "/home/${user}/"
         cp "/home/${user}/.bashrc" "/home/${user}/.bash_profile"
     fi

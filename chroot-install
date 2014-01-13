@@ -181,6 +181,8 @@ set_passwd()
     else
         return "${SUCCESS}"
     fi
+
+    return "${SUCCESS}"
 }
 
 configure_users()

@@ -5,3 +5,5 @@
 [X] 3 Install Choices
 [ ] Refactoring
 [ ] Configure hostname
+[ ] Solution when packets install fails - connection reasons
+[ ] Add check if root/user passwd fails

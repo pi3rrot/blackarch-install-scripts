@@ -135,12 +135,12 @@ select_ba_repo()
         printf "[+] you fucked up man - we select BlackArch for you...\n"
         # BLACKARCH_REPO_URL gets the default one - choose better next time ;)
     else
-        BLACKARCH_REPO_URL=$(sed -n "${a}p" /tmp/mirror.lst|cut -d"|" -f2)
-        printf "[+] Mirror from \'%s\' selected\n" "$(sed -n "${a}p" /tmp/mirror.lst|cut -d"|" -f3)"
+        BLACKARCH_REPO_URL=$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f2)
+        printf "[+] Mirror from \'%s\' selected\n" "$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f3)"
     fi
 
     # cleaning up
-    rm -rf /tmp/mirror.lst
+    rm -rf "${mirror_file}"
 
     printf "%s" "${NC}"
 

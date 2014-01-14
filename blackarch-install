@@ -24,9 +24,6 @@ SEC_ENABLE="false"
 # root variable
 ROOT="/mnt/blackarch"
 
-# BA REPO
-BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
-
 # Defaults Partitioning
 HD="/dev/sda"
 boot_part="${HD}"

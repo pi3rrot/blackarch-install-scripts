@@ -151,9 +151,11 @@ update_system()
         fi
     fi
 
-    pacman-key --init
-    pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-    pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+    if [ -n "${LIVE}" ]; then
+        pacman-key --init
+        pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+        pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+    fi
     pacman -Syy --noconfirm "${LIVE+-u}"
 
     return "${SUCCESS}"

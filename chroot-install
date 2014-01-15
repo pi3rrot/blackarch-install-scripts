@@ -136,8 +136,8 @@ select_ba_repo()
     printf "Select mirror number: "; read a
 
     if [ "${a}" -gt "$(wc -l < ${mirror_file})" ]; then
-        printf "[+] you fucked up man - we select BlackArch for you...\n"
         # BLACKARCH_REPO_URL gets the default one - choose better next time ;)
+        printf "[+] you fucked up man - we select BlackArch for you...\n"
     else
         BLACKARCH_REPO_URL=$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f2)
         printf "[+] Mirror from \'%s\' selected\n" "$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f3)"
@@ -155,6 +155,8 @@ update_system()
 {
     wprintf "[+] Adding BlackArch Official Repo"
     select_ba_repo
+    [ "${?}" == "${FAILURE}" ] &&
+        wprintf "[-] Mirror selection failed - We go with default one..."
 
     if ! grep -q "blackarch" /etc/pacman.conf; then
         printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf

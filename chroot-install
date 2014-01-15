@@ -216,7 +216,7 @@ set_passwd()
     fi
 
     if [ "${?}" != "0" ]; then
-        printf "[-] Wrong passwd - try again d00d\n"
+        err "[-] Wrong passwd for \'%s\'- try again d00d\n" "${user-root}"
         set_passwd "${user}"
     else
         return "${SUCCESS}"
@@ -243,6 +243,7 @@ configure_users()
         set_passwd "${user}"
         mv /mnt/shell/user/.bashrc "/home/${user}/"
         cp "/home/${user}/.bashrc" "/home/${user}/.bash_profile"
+        chown -R "${user}:users" "/home/${user}"
     fi
 
     # cleaning up

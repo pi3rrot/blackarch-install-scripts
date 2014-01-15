@@ -47,19 +47,6 @@ wprintf() {
     return "${SUCCESS}"
 }
 
-# white read printf for read
-# it will print answer
-wrprintf() {
-    fmt=$1
-    shift
-    printf "%s${fmt}%s" "${WHITE}" "$@" "${NC}"
-    read a
-    printf "%s" "${a}"
-
-    return "${SUCCESS}"
-}
-
-
 # print warning
 warn()
 {
@@ -146,7 +133,7 @@ select_ba_repo()
         ((count++))
     done < "${mirror_file}" )
 
-    a=$(wrprintf "Select mirror number: ")
+    printf "%sSelect mirror number: " "${WHITE}"; read a
 
     if [ "${a}" -gt "$(wc -l < ${mirror_file})" ]; then
         # BLACKARCH_REPO_URL gets the default one - choose better next time ;)
@@ -172,7 +159,7 @@ update_system()
     if ! grep -q "blackarch" /etc/pacman.conf; then
         printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
     else
-        sed -i "/\[blackarch\]/a Server = ${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
+        sed -i "/\[blackarch\]/{ n;s/Server.*/Server = ${BLACKARCH_REPO_URL};/}" /etc/pacman.conf
     fi
 
     # key problem - will be solved later on

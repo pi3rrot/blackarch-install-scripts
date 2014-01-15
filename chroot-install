@@ -38,6 +38,7 @@ NC="$(tput sgr0)" # No Color
 # BA REPO DEFAULT
 BLACKARCH_REPO_URL='http://www.blackarch.org/blackarch/$repo/os/$arch'
 
+# printf white
 wprintf() {
     fmt=$1
     shift
@@ -45,6 +46,19 @@ wprintf() {
 
     return "${SUCCESS}"
 }
+
+# white read printf for read
+# it will print answer
+wrprintf() {
+    fmt=$1
+    shift
+    printf "%s${fmt}%s" "${WHITE}" "$@" "${NC}"
+    read a
+    printf "%s" "${a}"
+
+    return "${SUCCESS}"
+}
+
 
 # print warning
 warn()
@@ -112,41 +126,38 @@ select_ba_repo()
 {
     mirror_file="/tmp/mirror.lst"
     github_url="https://github.com/BlackArch/blackarch/raw/master/mirror/mirror.lst"
-    printf "%s" "${WHITE}"
 
-    printf "[+] Fetching mirror list...\n"
+    wprintf "[+] Fetching mirror list..."
     # check wget installed
     command -v wget >/dev/null 2>&1 ||
         pacman -S wget --noconfirm
 
     wget -q "${github_url}" -O "${mirror_file}"
-    [ "${?}" != "0" ] && printf "[-] wget failed - setting BlackArch repository\n" &&
+    [ "${?}" != "0" ] && wprintf "[-] wget failed - setting BlackArch repository" &&
         return "${FAILURE}"
 
-    printf "[+] Select BlackArch Repository\n"
+    wprintf "[+] Select BlackArch Repository"
 
     count="1"
     local IFS='|'
     ( while read -r country url mirror_name; do
-        printf "    [%s] %s - %s\n" "${count}" "${country}" "${mirror_name}"
-        printf "        * %s\n" "${url}"
+        wprintf "    [%s] %s - %s" "${count}" "${country}" "${mirror_name}"
+        wprintf "        * %s" "${url}"
         ((count++))
     done < "${mirror_file}" )
 
-    printf "Select mirror number: "; read a
+    a=$(wrprintf "Select mirror number: ")
 
     if [ "${a}" -gt "$(wc -l < ${mirror_file})" ]; then
         # BLACKARCH_REPO_URL gets the default one - choose better next time ;)
-        printf "[+] you fucked up man - we select BlackArch for you...\n"
+        wprintf "[+] you fucked up man - we select BlackArch for you..."
     else
         BLACKARCH_REPO_URL=$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f2)
-        printf "[+] Mirror from \'%s\' selected\n" "$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f3)"
+        wprintf "[+] Mirror from '%s' selected" "$(sed -n "${a}p" "${mirror_file}"|cut -d"|" -f3)"
     fi
 
     # cleaning up
     rm -rf "${mirror_file}"
-
-    printf "%s" "${NC}"
 
     return "${SUCCESS}"
 }
@@ -225,7 +236,7 @@ set_passwd()
     fi
 
     if [ "${?}" != "0" ]; then
-        err "[-] Wrong passwd for \'%s\'- try again d00d\n" "${user-root}"
+        err "[-] Wrong passwd for '%s'- try again d00d\n" "${user-root}"
         set_passwd "${user}"
     else
         return "${SUCCESS}"

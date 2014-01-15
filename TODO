@@ -10,4 +10,4 @@
 [X] Add mirrorlist generator support + rankmirror call based on user's country code enter.
 [ ] Add quiet mode option / progressbar of installation
 [ ] Check grub config: wrong label for blackarch entries
-[ ] pacman.conf fix: remove multiple [multilib] entries.
+[X] pacman.conf fix: remove multiple [multilib] entries.

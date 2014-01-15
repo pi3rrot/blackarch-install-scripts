@@ -229,7 +229,7 @@ set_passwd()
     fi
 
     if [ "${?}" != "0" ]; then
-        err "Wrong passwd - try again d00d"
+        wprintf "Wrong passwd - try again d00d"
         set_passwd "${user}"
     else
         return "${SUCCESS}"

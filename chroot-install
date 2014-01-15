@@ -115,6 +115,10 @@ select_ba_repo()
     printf "%s" "${WHITE}"
 
     printf "[+] Fetching mirror list...\n"
+    # check wget installed
+    command -v strip >/dev/null 2>&1 ||
+        pacman -S wget --noconfirm
+
     wget -q "${github_url}" -O "${mirror_file}"
     [ "${?}" != "0" ] && printf "[-] wget failed - setting BlackArch repository\n" &&
         return "${FAILURE}"

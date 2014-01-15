@@ -159,7 +159,7 @@ update_system()
     if ! grep -q "blackarch" /etc/pacman.conf; then
         printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
     else
-        sed -i "/\[blackarch\]/{ n;s/Server.*/Server = ${BLACKARCH_REPO_URL};/}" /etc/pacman.conf
+        sed -i "/\[blackarch\]/{ n;s/Server.*/Server = ${BLACKARCH_REPO_URL}/; }" /etc/pacman.conf
     fi
 
     # key problem - will be solved later on

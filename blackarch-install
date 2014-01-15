@@ -43,7 +43,7 @@ MENU_REPO="2"
 MENU_BLACKMAN="3"
 
 # blackarchinstall version
-VERSION="v0.5.6.7beta"
+VERSION="v0.5.6.8beta"
 
 # true / false
 FALSE="0"
@@ -152,10 +152,9 @@ update_system()
     fi
 
     pacman-key --init
-    pacman -Syyu --noconfirm
     pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
     pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-    pacman -Syy "${LIVE+-u}"
+    pacman -Syy --noconfirm "${LIVE+-u}"
 
     return "${SUCCESS}"
 }

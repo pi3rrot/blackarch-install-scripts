@@ -149,10 +149,13 @@ select_ba_repo()
 
 update_system()
 {
+    wprintf "[+] Adding BlackArch Official Repo"
+    select_ba_repo
+
     if ! grep -q "blackarch" /etc/pacman.conf; then
-        wprintf "[+] Adding BlackArch Official Repo"
-        select_ba_repo
         printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
+    else
+        sed -i "/\[blackarch\]/a Server = ${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
     fi
 
     # key problem - will be solved later on

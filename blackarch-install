@@ -75,7 +75,9 @@ wprintf() {
 # print warning
 warn()
 {
-    printf "%s[!] WARNING: %s%s\n" "${RED}" "${*}" "${NC}"
+    fmt=${1}
+    shift
+    printf "%s[!] WARNING: ${fmt}%s\n" "${RED}" "${@}" "${NC}"
 
     return "${SUCCESS}"
 }
@@ -83,15 +85,19 @@ warn()
 # print error and exit
 err()
 {
-    printf "%s[-] ERROR: %s%s\n" "${RED}" "${*}" "${NC}"
+    fmt=${1}
+    shift
+    printf "%s[-] ERROR: ${fmt}%s\n" "${RED}" "${@}" "${NC}"
 
-    return "${SUCCESS}"
+    return "${FAILURE}"
 }
 
 # print error and exit
 cri()
 {
-    printf "%s[-] CRITICAL: %s%s\n" "${RED}" "${*}" "${NC}"
+    fmt=${1}
+    shift
+    printf "%s[-] CRITICAL: ${fmt}%s\n" "${RED}" "${@}" "${NC}"
 
     exit "${FAILURE}"
 }

@@ -209,6 +209,8 @@ install_grub()
     grub-mkconfig -o /boot/grub/grub.cfg
     sed -i 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
         /boot/grub/grub.cfg
+    sed -i 's/rw  quiet/rw cryptdevice=\/dev\/sda2:cryptboot/' \
+	/boot/grub/grub.cfg
 
     grub-install "${HD}"
 
@@ -270,6 +272,7 @@ configure_users()
 # not used atm
 generate_initfs()
 {
+    sed -i 's/block filesystems/block encrypt filesystems/' /etc/mkinitcpio.conf
     mkinitcpio -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
     mkinitcpio -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux-falback.img -S autodetect
     #mkinitcpio -c /etc/mkinitcpio-archiso.conf -g /boot/blackarch-linux.img
@@ -299,6 +302,9 @@ install()
 
     wprintf "[+] Configure system users..."
     configure_users
+
+    wprintf "[+] Re-Generating initfs..."
+    generate_initfs
 
     wprintf "[+] Installing grub..."
     install_grub

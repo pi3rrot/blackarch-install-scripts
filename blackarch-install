@@ -230,11 +230,24 @@ format_filesystem()
 
         boot_part="${boot_part}1"
         root_part="${root_part}2"
-        "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
-        "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
+	
+	"mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
+	rintf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
 
-        printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
-        printf "[+] Created root partition: %s - ext4\n" "${root_part}"
+	if [ $LUKS == "YES" ]; then	
+		#Format and encrypt ROOT partition
+		printf "[+] Formating ROOT partiton, please type your passphrase for encryption : \n"
+		cryptsetup -y -v luksFormat "${root_part}"
+		printf "[+] Openning encrypted partition, re-enter your passphrase : \n"
+		cryptsetup open "${root_part}" cryptroot
+		"mkfs.${root_type}" -L root "/dev/mapper/cryptroot"; check_mkfs_status
+		printf "[+] Created root encrypted partition: /dev/mapper/cryptroot - ext4\n"
+	
+	else
+		"mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
+		printf "[+] Created root partition: %s - ext4\n" "${root_part}"
+	fi
+
     else
         # go back to setup up filesystem
         setup_filesystem
@@ -284,13 +297,26 @@ manual_partition()
     return "${SUCCESS}"
 }
 
-setup_filesystem()
+ask_for_luks()
 {
-    # TODO: add swap
+    printf "%s" "${WHITE}"
+    # user input for luks
+    printf "[+] Do you want full encrypted filesystem? (YES in upper case) :\n"
+    read LUKS;
+
+    if [ $LUKS == "YES" ]; then
+	    printf "[!] Filesystem will be encrypted\n"
+    else
+	    printf "[!] Filesystem will NOT be encrypted\n"
+    fi
+
+}
+
+setup_filesystem()	    
+{
+    #TODO swap
 
     printf "%s" "${WHITE}"
-
-
     # user input settings
     printf "[+] Type the device for install [%s]: " "${HD}"
     read a; [ "${a}" != "" ] && HD=${a} # sanitize input
@@ -321,9 +347,13 @@ setup_filesystem()
 
 mount_filesystem()
 {
-
     mkdir -p "${ROOT}"
-    mount -t "${root_type}" "${root_part}" "${ROOT}"
+    if [ $LUKS == "YES" ]; then
+	    mount -t "${root_type}" /dev/mapper/cryptroot "${ROOT}"
+    else
+	    mount -t "${root_type}" "${root_part}" "${ROOT}"
+    fi
+
     mkdir -p "${ROOT}/boot"
     mount -t "${boot_type}" "${boot_part}" "${ROOT}/boot"
 
@@ -401,6 +431,7 @@ install()
     update_system
 
     wprintf "[+] Hard drive configuration..."
+    ask_for_luks
     setup_filesystem
 
     wprintf "[+] Mounting filesystem..."

@@ -32,6 +32,8 @@ boot_size="100MB"
 root_part="${HD}"
 root_type="ext4"
 root_size="10GB"
+swap_part="${HD}"
+swap_size="1024MB"
 
 # Partition CONST
 PART_AUTO="1"
@@ -43,7 +45,7 @@ MENU_REPO="2"
 MENU_BLACKMAN="3"
 
 # blackarchinstall version
-VERSION="v0.6beta"
+VERSION="v0.6.1beta"
 
 # true / false
 FALSE="0"
@@ -181,6 +183,10 @@ setup_partition_values()
     printf "[+] Select partition size for / [%s]: " "${root_size}"
     read a; [ "${a}" != "" ] && root_size=${a}
 
+    # * Swap
+    printf "[+] Select partition size for swap [%s] : " "${swap_size}"
+    read a; [ "${a}" != "" ] && swap_size=${a}
+
     return "${SUCCESS}"
 }
 
@@ -207,6 +213,7 @@ format_filesystem()
     printf "\n[!!] About to create and format partitions:\n"
     printf "    -> /boot %s - Size: %s\n" "${boot_part}" "${boot_size}"
     printf "    -> /     %s - Size: %s\n" "${root_part}" "${root_size}"
+    printf "    -> Swap  %s - Size: %s\n" "${swap_part}" "${swap_size}"
     printf "Are you sure? [y/N]: "; read a
     [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "   - R3ally? ;) \n[y/N]: "; read a
     printf "%s" "${WHITE}"
@@ -218,25 +225,29 @@ format_filesystem()
         parted -s "${HD}" mklabel msdos
         check_parted_status
 
-        parted -a optimal "${boot_part}" mkpart primary 0% "${boot_size}"
+	(echo n; echo p; echo 1; echo ; echo +${boot_size}; echo w; echo q) | fdisk ${HD}
         check_parted_status
-
         # partition bootable
         parted "${boot_part}" set 1 boot on
         check_parted_status
 
-        parted -a optimal "${root_part}" mkpart primary "${boot_size}" "${root_size}"
-        check_parted_status
+	(echo n; echo p; echo 2; echo ; echo +${swap_size}; echo w; echo q) | fdisk ${HD}
+	check_parted_status
+
+	(echo n; echo p; echo 3; echo ; echo +${root_size}; echo w; echo q) | fdisk ${HD}
+	check_parted_status
+
 
         boot_part="${boot_part}1"
-        root_part="${root_part}2"
+        swap_part="${swap_part}2"
+	root_part="${root_part}3"
 	
 	"mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
-	rintf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
+	printf "[+] Created boot partition: %s - ext2\n" "${boot_part}"
 
 	if [ $LUKS == "YES" ]; then	
 		#Format and encrypt ROOT partition
-		printf "[+] Formating ROOT partiton, please type your passphrase for encryption : \n"
+		printf "[+] Formatting ROOT partiton, please type your passphrase for encryption : \n"
 		cryptsetup -y -v luksFormat "${root_part}"
 		printf "[+] Openning encrypted partition, re-enter your passphrase : \n"
 		cryptsetup open "${root_part}" cryptroot
@@ -247,6 +258,9 @@ format_filesystem()
 		"mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
 		printf "[+] Created root partition: %s - ext4\n" "${root_part}"
 	fi
+
+	/usr/bin/mkswap ${swap_part}; check_mkfs_status
+	printf "[+] Created Swap partition: %s - SWAP\n" "${swap_part}"
 
     else
         # go back to setup up filesystem
@@ -263,6 +277,7 @@ manual_partition()
     # manual defaults
     boot_part="${HD}1"
     root_part="${HD}2"
+    swap_part="${HD}3"
 
     printf "[+] Create new partitions with cfdisk [only boot and root]\n"
     sleep 2
@@ -275,12 +290,15 @@ manual_partition()
     read a; [ "${a}" != "" ] && root_part="${HD}${a}"
     printf "    -> Type of Root partition [ext4]: "
     read a; [ "${a}" != "" ] && boot_type="${a}"
-
+    printf "    -> Number of the Swap partition created [3]: "
+    read a; [ "${a}" != "" ] && swap_part="${a}"
+    
     # about to format
     printf "%s" "${RED}"
     printf "\n[!!] About to create and format partitions:\n"
     printf "    -> /boot %s with type %s\n" "${boot_part}" "${boot_type}"
     printf "    -> /     %s with type %s\n" "${root_part}" "${root_type}"
+    printf "    -> Swap  %s with type Swap\n" "${swap_part}"
     printf "Are you sure? [y/N]: "; read a
     [ "${a}" == "y" ] || [ "${a}" == "Y" ] && printf "   - R3ally? ;) \n[y/N]: "; read a
     printf "%s" "${WHITE}"
@@ -288,6 +306,7 @@ manual_partition()
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
         "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
         "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
+	"mkfswap ${swap_part}"; check_mkfs_status
     else
         # go back to setup up filesystem
         setup_filesystem
@@ -301,21 +320,19 @@ ask_for_luks()
 {
     printf "%s" "${WHITE}"
     # user input for luks
-    printf "[+] Do you want full encrypted filesystem? (YES in upper case) :\n"
+    printf "[+] Do you want full encrypted root? (YES in upper case) :\n"
     read LUKS;
 
     if [ $LUKS == "YES" ]; then
-	    printf "[!] Filesystem will be encrypted\n"
+	    printf "[!] Root will be encrypted\n"
     else
-	    printf "[!] Filesystem will NOT be encrypted\n"
+	    printf "[!] Root will NOT be encrypted\n"
     fi
 
 }
 
 setup_filesystem()	    
 {
-    #TODO swap
-
     printf "%s" "${WHITE}"
     # user input settings
     printf "[+] Type the device for install [%s]: " "${HD}"
@@ -328,7 +345,7 @@ setup_filesystem()
         printf "%s[WARNING] If this is a real env (not a Virtual Machine):\n" "${RED}"
         printf " * We recomend you to make partitioning by hand with option 2.\n"
         printf " * This comes with no guarantees after option 1. You had been warned. ;)\n%s" "${WHITE}"
-        printf "    1. Automatic - only empty HD! new partitions will be created in %s1 and %s2\n" "${HD}" "${HD}"
+        printf "    1. Automatic - only empty HD! new partitions will be created in %s1, %s2 ans %s3\n" "${HD}" "${HD}" "${HD}"
         printf "    2. Manual - set manual partitions with cfdisk and format them\n"
         printf "Make your choice: "; read part_opt
     done
@@ -356,6 +373,8 @@ mount_filesystem()
 
     mkdir -p "${ROOT}/boot"
     mount -t "${boot_type}" "${boot_part}" "${ROOT}/boot"
+
+    swapon
 
     return "${SUCCESS}"
 }

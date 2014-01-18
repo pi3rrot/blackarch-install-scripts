@@ -159,8 +159,10 @@ update_system()
 
     if [ -n "${LIVE}" ]; then
         pacman-key --init
-        pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-        pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+        wget http://blackarch.org/blackarch/blackarch/os/x86_64/blackarch-keyring-20140108-1-any.pkg.tar.xz{,.sig}
+        gpg --keyserver hkp://pgp.mit.edu --recv-keys '4345771566D76038C7FEB43863EC0ADBEA87E4E3'
+        gpg --with-fingerprint blackarch-keyring-20140108-1-any.pkg.tar.xz.sig
+        pacman -U blackarch-keyring-20140108-1-any.pkg.tar.xz --noconfirm
     fi
     pacman -Syy --noconfirm "${LIVE+-u}"
 

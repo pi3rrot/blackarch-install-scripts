@@ -303,7 +303,10 @@ install()
     wprintf "[+] Installing grub..."
     install_grub
 
-    printf "%s[+] BlackArch Linux ready!%s\n" "${RED}" "${NC}"
+    # sync hd
+    sync
+
+    printf "%s[+] BlackArch Linux ready! Enjoy!%s\n" "${RED}" "${NC}"
 
 
     return "${SUCCESS}"

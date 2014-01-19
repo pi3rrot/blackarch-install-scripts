@@ -84,7 +84,7 @@ usage()
 cat <<EOF
 Usage: $0 <arg> | <misc>
 OPTIONS:
-    -l: liveCD install
+    -l: Live-ISO install
     -r: repository install
     -b: blackman install
     -d: device target [/dev/sda]

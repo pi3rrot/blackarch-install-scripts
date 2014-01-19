@@ -1,13 +1,13 @@
 Blackarch Install
 -----------------
 
-Install From ArchLinux/BlackArch LiveCD-DVD/BlackArch NetInstall
+Install From ArchLinux/BlackArch Live-ISO-DVD/BlackArch NetInstall
 ----------------------------------------------------------------
 Version: 0.5.x (See Github Tags)
 
     1. # blackarch-install
     2. Select Install Mode:
-        1. Install from LiveCD.
+        1. Install from Live-ISO.
             - It will dump the current Live image into your hard drive.
         2. Install from BlackArch Official Repository.
             - It will install base system from Arch Linux and
@@ -56,7 +56,7 @@ Version: 0.5.x (See Github Tags)
 Install From ArchLinux - v0.4 Release (See Github Tags)
 --------------------------------------------------------
     - v0.4 comes with several install options:
-        1. Install from LiveCD - Dump everything to your partition.
+        1. Install from Live-ISO - Dump everything to your partition.
         2. Install from Repository - Install packages you choose From BlackArch Official Repository.
         3. Install from Blackman - Download And Compile Packages from their PKGBUILD.
 

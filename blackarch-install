@@ -464,7 +464,7 @@ install_menu()
            -o "${menu_opt}" == "${MENU_BLACKMAN}" ]; do
 
         printf "[+] Select Install Mode:\n"
-        printf "    1. Install from LiveCD.\n"
+        printf "    1. Install from Live-ISO.\n"
         printf "    2. Install from BlackArch Official Repository.\n"
         printf "    3. Install from Blackman.\n"
         printf "Make a choice: "; read menu_opt

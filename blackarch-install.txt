@@ -5,7 +5,7 @@ Install
 
     1. # blackarch-install
     2. Select Install Mode:
-        1. Install from LiveCD.
+        1. Install from Live-ISO.
             - It will dump the current Live image into your hard drive.
         2. Install from BlackArch Official Repository.
             - It will install base system from Arch Linux and

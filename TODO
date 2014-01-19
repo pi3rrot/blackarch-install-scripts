@@ -8,6 +8,7 @@
 [ ] Solution when packets install fails - connection reasons
 [X] Add check if root/user passwd fails
 [X] Add mirrorlist generator support + rankmirror call based on user's country code enter.
+[ ] Add arch mirrorlist generator support + rankmirror call based on user's country code enter
 [ ] Add quiet mode option / progressbar of installation
 [ ] Check grub config: wrong label for blackarch entries
 [X] pacman.conf fix: remove multiple [multilib] entries.

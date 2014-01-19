@@ -202,8 +202,8 @@ install_grub()
 {
     pacman -S grub --noconfirm --needed
 
-    wprintf "[+] Patching grub2 syntax error"
-    printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
+    #wprintf "[+] Patching grub2 syntax error"
+    #printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
 
     # adding blackarch splash
     mv /boot/splash.png /boot/grub/

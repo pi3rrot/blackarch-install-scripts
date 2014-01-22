@@ -436,12 +436,12 @@ install()
     fi
 
     wprintf "[+] Installing chroot system..."
-    # copy .bashrc and issue for users
     if [ -d shell ]; then
+        sed -i 's/localhost/blackarch/g' /etc/hosts
         cp -f shell/etc/issue "${ROOT}/etc/"
         cp -R shell/ "${ROOT}/mnt/"
     else
-        cp -R /usr/share/blackarch-install-scripts/shell/etc/issue "${ROOT}/etc/"
+        cp -f /usr/share/blackarch-install-scripts/shell/etc/issue "${ROOT}/etc/"
         cp -R /usr/share/blackarch-install-scripts/shell "${ROOT}/mnt/"
     fi
     case "${menu_opt}" in

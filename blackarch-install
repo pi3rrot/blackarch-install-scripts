@@ -264,7 +264,7 @@ manual_partition()
     printf "    -> Number of the Root partition created [2]: "
     read a; [ "${a}" != "" ] && root_part="${HD}${a}"
     printf "    -> Type of Root partition [ext4]: "
-    read a; [ "${a}" != "" ] && boot_type="${a}"
+    read a; [ "${a}" != "" ] && root_type="${a}"
 
     # about to format
     printf "%s" "${RED}"

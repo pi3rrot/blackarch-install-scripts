@@ -303,6 +303,9 @@ install()
     wprintf "[+] Configure system users..."
     configure_users
 
+    wprintf "[+] Setting blackarch hostname..."
+    hostname blackarch
+
     wprintf "[+] Installing grub..."
     install_grub
 

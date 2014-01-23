@@ -43,7 +43,7 @@ MENU_REPO="2"
 MENU_BLACKMAN="3"
 
 # blackarchinstall version
-VERSION="v0.6.2beta"
+VERSION="v0.6.3beta"
 
 # true / false
 FALSE="0"

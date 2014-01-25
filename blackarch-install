@@ -256,7 +256,7 @@ manual_partition()
 
     printf "[+] Create new partitions with cfdisk [only boot and root]\n"
     sleep 2
-    cfdisk
+    cfdisk "${HD}"
     printf "    -> Number of the Boot partition created [1]: "
     read a; [ "${a}" != "" ] && boot_part="${HD}${a}"
     printf "    -> Type of Boot partition [ext2]: "

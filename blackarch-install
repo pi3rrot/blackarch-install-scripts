@@ -45,7 +45,7 @@ MENU_REPO="2"
 MENU_BLACKMAN="3"
 
 # blackarchinstall version
-VERSION="v0.6.1beta"
+VERSION="v0.6.3beta"
 
 # true / false
 FALSE="0"
@@ -160,9 +160,12 @@ update_system()
     fi
 
     if [ -n "${LIVE}" ]; then
-        pacman-key --init
-        pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-        pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+      wget http://blackarch.org/blackarch/blackarch/os/x86_64/blackarch-keyring-20140118-3-any.pkg.tar.xz{,.sig}
+      gpg --keyserver hkp://pgp.mit.edu --recv-keys '4345771566D76038C7FEB43863EC0ADBEA87E4E3'
+      gpg --with-fingerprint --verify blackarch-keyring-20140118-3-any.pkg.tar.xz.sig
+      rm blackarch-keyring-20140118-3-any.pkg.tar.xz.sig
+      pacman-key --init
+      pacman -U blackarch-keyring-20140118-3-any.pkg.tar.xz --noconfirm
     fi
     pacman -Syy --noconfirm "${LIVE+-u}"
 
@@ -281,7 +284,7 @@ manual_partition()
 
     printf "[+] Create new partitions with cfdisk [only boot and root]\n"
     sleep 2
-    cfdisk
+    cfdisk "${HD}"
     printf "    -> Number of the Boot partition created [1]: "
     read a; [ "${a}" != "" ] && boot_part="${HD}${a}"
     printf "    -> Type of Boot partition [ext2]: "
@@ -483,12 +486,16 @@ install()
     fi
 
     wprintf "[+] Installing chroot system..."
-    # copy .bashrc for users
     if [ -d shell ]; then
+        cp -f shell/etc/issue "${ROOT}/etc/"
         cp -R shell/ "${ROOT}/mnt/"
     else
+        cp -f /usr/share/blackarch-install-scripts/shell/etc/issue "${ROOT}/etc/"
         cp -R /usr/share/blackarch-install-scripts/shell "${ROOT}/mnt/"
     fi
+    # setup hostname
+    sed -i 's/localhost/blackarch/g' "${ROOT}/etc/hosts"
+
     case "${menu_opt}" in
         "${MENU_LIVE}")
             install_chroot "-l"
@@ -512,7 +519,7 @@ install_menu()
            -o "${menu_opt}" == "${MENU_BLACKMAN}" ]; do
 
         printf "[+] Select Install Mode:\n"
-        printf "    1. Install from LiveCD.\n"
+        printf "    1. Install from Live-ISO.\n"
         printf "    2. Install from BlackArch Official Repository.\n"
         printf "    3. Install from Blackman.\n"
         printf "Make a choice: "; read menu_opt

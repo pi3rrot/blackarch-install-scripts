@@ -13,7 +13,7 @@ v0.3
 			-> Manual not implemented (v0.5)
 v0.4
 	-> install
-		1. Install from LiveCD - Dump everything to your partition.
+		1. Install from Live-ISO - Dump everything to your partition.
 v0.5
 	-> Partition mode
 		-> Manual mode implemented

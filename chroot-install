@@ -84,7 +84,7 @@ usage()
 cat <<EOF
 Usage: $0 <arg> | <misc>
 OPTIONS:
-    -l: liveCD install
+    -l: Live-ISO install
     -r: repository install
     -b: blackman install
     -d: device target [/dev/sda]
@@ -162,16 +162,19 @@ update_system()
     [ "${?}" == "${FAILURE}" ] &&
         wprintf "[-] Mirror selection failed - We go with default one..."
 
+    wget http://blackarch.org/blackarch/blackarch/os/x86_64/blackarch-keyring-20140118-3-any.pkg.tar.xz{,.sig}
+    gpg --keyserver hkp://pgp.mit.edu --recv-keys '4345771566D76038C7FEB43863EC0ADBEA87E4E3'
+    gpg --with-fingerprint --verify blackarch-keyring-20140118-3-any.pkg.tar.xz.sig
+    rm blackarch-keyring-20140118-3-any.pkg.tar.xz.sig
+    pacman-key --init
+    pacman -U blackarch-keyring-20140118-3-any.pkg.tar.xz --noconfirm
+
     if ! grep -q "blackarch" /etc/pacman.conf; then
         printf '[blackarch]\nServer = %s\n' "${BLACKARCH_REPO_URL}" >> /etc/pacman.conf
     else
         sed -i "/\[blackarch\]/{ n;s?Server.*?Server = ${BLACKARCH_REPO_URL}?; }" /etc/pacman.conf
     fi
 
-    # key problem - will be solved later on
-    pacman-key --init
-    pacman-key -r 4345771566D76038C7FEB43863EC0ADBEA87E4E3
-    pacman-key --lsign-key 4345771566D76038C7FEB43863EC0ADBEA87E4E3
     pacman -Syyu --noconfirm
 
     return "${SUCCESS}"
@@ -199,8 +202,8 @@ install_grub()
 {
     pacman -S grub --noconfirm --needed
 
-    wprintf "[+] Patching grub2 syntax error"
-    printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
+    #wprintf "[+] Patching grub2 syntax error"
+    #printf "GRUB_DISABLE_SUBMENU=y\n" >> /etc/default/grub
 
     # adding blackarch splash
     mv /boot/splash.png /boot/grub/
@@ -305,11 +308,17 @@ install()
 
     wprintf "[+] Re-Generating initfs..."
     generate_initfs
+    
+    wprintf "[+] Setting blackarch hostname..."
+    hostname blackarch
 
     wprintf "[+] Installing grub..."
     install_grub
 
-    printf "%s[+] BlackArch Linux ready!%s\n" "${RED}" "${NC}"
+    # sync hd
+    sync
+
+    printf "%s[+] BlackArch Linux ready! Enjoy!%s\n" "${RED}" "${NC}"
 
 
     return "${SUCCESS}"

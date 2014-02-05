@@ -212,7 +212,7 @@ install_grub()
     grub-mkconfig -o /boot/grub/grub.cfg
     sed -i 's/Arch Linux, with Linux core repo kernel/BlackArch Linux/' \
         /boot/grub/grub.cfg
-    sed -i 's/rw  quiet/rw cryptdevice=\/dev\/sda2:cryptboot/' \
+    sed -i 's/rw  quiet/rw cryptdevice=\/dev\/sda3:cryptboot/' \
 	/boot/grub/grub.cfg
 
     grub-install "${HD}"

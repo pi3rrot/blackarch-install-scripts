@@ -377,7 +377,7 @@ mount_filesystem()
     mkdir -p "${ROOT}/boot"
     mount -t "${boot_type}" "${boot_part}" "${ROOT}/boot"
 
-    swapon
+    swapon ${swap_part}
 
     return "${SUCCESS}"
 }

@@ -320,6 +320,7 @@ manual_partition()
 	else
 		"mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
 		/usr/bin/mkswap ${swap_part}; check_mkfs_status
+	fi
 
     else
         # go back to setup up filesystem

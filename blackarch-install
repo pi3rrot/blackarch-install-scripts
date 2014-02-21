@@ -309,7 +309,7 @@ manual_partition()
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
         "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
         "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
-	"mkswap ${swap_part}"; check_mkfs_status
+	/usr/bin/mkswap ${swap_part}; check_mkfs_status
     else
         # go back to setup up filesystem
         setup_filesystem

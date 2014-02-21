@@ -308,8 +308,19 @@ manual_partition()
 
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
         "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
-        "mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
-	/usr/bin/mkswap ${swap_part}; check_mkfs_status
+
+	if [ LUKS == "YES" ]; then
+		#Format and encrypt ROOT partition
+		printf "[*] Formatting ROOT partition, please type your passphrase encryption : \n"
+		cryptsetup -y -v luksFormat "${root_part}"
+		printf "[*] Openning encrypted partition, re-enter your passphrase : \n"
+		cryptsetup open "${root_part}" cryptboot
+		"mkfs.${root_type}" -L root "/dev/mapper/cryptboot"; check_mkfs_status
+		print "[*] Created root encrypted partition: /dev/mapper/cryptboot - "${root_type}
+	else
+		"mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
+		/usr/bin/mkswap ${swap_part}; check_mkfs_status
+
     else
         # go back to setup up filesystem
         setup_filesystem

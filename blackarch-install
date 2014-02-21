@@ -315,8 +315,8 @@ manual_partition()
 		cryptsetup -y -v luksFormat "${root_part}"
 		printf "[*] Openning encrypted partition, re-enter your passphrase : \n"
 		cryptsetup open "${root_part}" cryptroot
-		"mkfs.${root_type}" -L root "/dev/mapper/cryptboot"; check_mkfs_status
-		print "[*] Created root encrypted partition: /dev/mapper/cryptboot - "${root_type}
+		"mkfs.${root_type}" -L root "/dev/mapper/cryptroot"; check_mkfs_status
+		print "[*] Created root encrypted partition: /dev/mapper/cryptroot - "${root_type}
 	else
 		"mkfs.${root_type}" -L root "${root_part}"; check_mkfs_status
 		/usr/bin/mkswap ${swap_part}; check_mkfs_status

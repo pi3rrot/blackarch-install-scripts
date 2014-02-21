@@ -314,7 +314,7 @@ manual_partition()
 		printf "[*] Formatting ROOT partition, please type your passphrase encryption : \n"
 		cryptsetup -y -v luksFormat "${root_part}"
 		printf "[*] Openning encrypted partition, re-enter your passphrase : \n"
-		cryptsetup open "${root_part}" cryptboot
+		cryptsetup open "${root_part}" cryptroot
 		"mkfs.${root_type}" -L root "/dev/mapper/cryptboot"; check_mkfs_status
 		print "[*] Created root encrypted partition: /dev/mapper/cryptboot - "${root_type}
 	else

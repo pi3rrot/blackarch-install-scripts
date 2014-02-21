@@ -309,7 +309,7 @@ manual_partition()
     if [ "${a}" == "y" ] || [ "${a}" == "Y" ]; then
         "mkfs.${boot_type}" -L boot "${boot_part}"; check_mkfs_status
 
-	if [ LUKS == "YES" ]; then
+	if [ $LUKS == "YES" ]; then
 		#Format and encrypt ROOT partition
 		printf "[*] Formatting ROOT partition, please type your passphrase encryption : \n"
 		cryptsetup -y -v luksFormat "${root_part}"

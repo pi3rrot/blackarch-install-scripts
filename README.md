@@ -12,7 +12,7 @@ Version: 0.5.x (See Github Tags)
         2. Install from BlackArch Official Repository.
             - It will install base system from Arch Linux and
             add Black Arch Linux packages from the official repository
-            into your hard drive. You can choose the packets to install.
+            into your hard drive. You can choose the packages to install.
         3. Install from Blackman.
             - It will install base system from Arch Linux and
             will download and compile all the BlackArch Linux packages
